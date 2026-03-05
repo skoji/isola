@@ -7,5 +7,17 @@ module Isola
     def initialize(config)
       @config = DEFAULT_CONFIG.merge(YAML.safe_load(config, symbolize_names: true) || {})
     end
+
+    def title
+      @config[:title]
+    end
+
+    def url
+      @config[:url]
+    end
+
+    def lang
+      @config[:default_language]
+    end
   end
 end
