@@ -8,7 +8,7 @@ class TestSite < Minitest::Test
     assert_equal site.config, ::Isola::Site::DEFAULT_CONFIG
     assert_equal site.title, ::Isola::Site::DEFAULT_CONFIG[:title]
     assert_equal site.url, ::Isola::Site::DEFAULT_CONFIG[:url]
-    assert_equal site.lang, ::Isola::Site::DEFAULT_CONFIG[:default_language]    
+    assert_equal site.lang, ::Isola::Site::DEFAULT_CONFIG[:default_language]
   end
 
   def test_initialize_site_with_config
