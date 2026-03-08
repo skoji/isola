@@ -18,6 +18,10 @@ gem install isola
 
 To be filled when implemented.
 
-## Contributing
+## Development Policy
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/skoji/isola.
+This project does not use Agentic Coding at all. AI assistance in code reviews is not avoided.
+
+## License
+
+See [LICENSE](LICENSE)
