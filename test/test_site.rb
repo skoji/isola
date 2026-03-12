@@ -5,10 +5,11 @@ require "test_helper"
 class TestSite < Minitest::Test
   def test_initialize_site_with_empty_config
     site = ::Isola::Site.new("")
-    assert_equal site.config, ::Isola::Site::DEFAULT_CONFIG
-    assert_equal site.title, ::Isola::Site::DEFAULT_CONFIG[:title]
-    assert_equal site.url, ::Isola::Site::DEFAULT_CONFIG[:url]
-    assert_equal site.lang, ::Isola::Site::DEFAULT_CONFIG[:default_language]
+    assert_equal ::Isola::Site::DEFAULT_CONFIG.merge({root_dir: Dir.getwd}), site.config
+    assert_equal ::Isola::Site::DEFAULT_CONFIG[:title], site.title
+    assert_equal ::Isola::Site::DEFAULT_CONFIG[:url], site.url
+    assert_equal ::Isola::Site::DEFAULT_CONFIG[:default_language], site.lang
+    assert_equal Dir.getwd, site.root_dir
   end
 
   def test_initialize_site_with_config
@@ -17,11 +18,13 @@ class TestSite < Minitest::Test
       title: skoji.jp web site
       destination: dest
       default_language: ja
+      root_dir: /tmp
     EOF
                             )
-    assert_equal site.config, {url: "https://skoji.jp", title: "skoji.jp web site", destination: "dest", default_language: "ja"}
-    assert_equal site.title, "skoji.jp web site"
-    assert_equal site.url, "https://skoji.jp"
-    assert_equal site.lang, "ja"
+    assert_equal({root_dir: "/tmp", url: "https://skoji.jp", title: "skoji.jp web site", destination: "dest", default_language: "ja"}, site.config)
+    assert_equal "skoji.jp web site", site.title
+    assert_equal "https://skoji.jp", site.url
+    assert_equal "ja", site.lang
+    assert_equal "/tmp", site.root_dir
   end
 end
