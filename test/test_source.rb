@@ -12,7 +12,7 @@ class TestSource < Minitest::Test
       This is the awesome content
     EOF
     )
-    filename, meta, content = source.instance_eval { [@filename, @meta, @content] }
+    filename, meta, content = source.filename, source.meta, source.content
     assert_equal("page.md", filename, filename)
     assert_equal({layout: "awesome_layout", title: "this is it!"}, meta)
     assert_equal("This is the awesome content", content.strip)
