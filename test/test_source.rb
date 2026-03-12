@@ -12,8 +12,8 @@ class TestSource < Minitest::Test
       This is the awesome content
     EOF
     )
-    filename, meta, content = source.filename, source.meta, source.content
-    assert_equal("page.md", filename, filename)
+    filepath, meta, content = source.filepath, source.meta, source.content
+    assert_equal("page.md", filepath, filepath)
     assert_equal({layout: "awesome_layout", title: "this is it!"}, meta)
     assert_equal("This is the awesome content", content.strip)
   end
