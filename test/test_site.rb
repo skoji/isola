@@ -27,4 +27,14 @@ class TestSite < Minitest::Test
     assert_equal "ja", site.lang
     assert_equal "/tmp", site.root_dir
   end
+
+  def test_collect_files
+    mock = Minitest::Mock.new
+    mock.expect(:call, "new FileHandler Object", ["/the/root/dir"])
+    ::Isola::FileHandler.stub(:new, mock) do
+      site = ::Isola::Site.new("root_dir: /the/root/dir")
+      site.collect_files
+    end
+    mock.verify
+  end
 end

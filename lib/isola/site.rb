@@ -24,5 +24,9 @@ module Isola
     def root_dir
       @config[:root_dir]
     end
+
+    def collect_files
+      @file_handler = FileHandler.new(root_dir)
+    end
   end
 end
