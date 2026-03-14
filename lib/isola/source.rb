@@ -11,5 +11,21 @@ module Isola
         [nil, text]
       end
     end
+
+    def render(context, site)
+      path = @filepath.dup
+      rendered = @content.dup
+      while !(ext = File.extname(path)).empty?
+        && site.is_supported_ext(ext)
+        rendered = Tilt.new(path) { rendered }.render(context)
+        path.delete_suffix! ext
+      end
+
+      if !ext.empty?
+        [rendered, path]
+      else
+        [rendered, path.delete_suffix(ext) + site.result_ext_for(ext)]
+      end
+    end
   end
 end
