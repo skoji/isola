@@ -39,5 +39,18 @@ module Isola
     def collect_files
       @file_handler = FileHandler.new(root_dir)
     end
+
+    def layout name
+      if !@parsed_layouts[name]
+        p = @file_handler.layouts[name]
+        return nil if !p
+        @parsed_layouts[name] = Source.new(p, read_in_site(p))
+      end
+      @parsed_layouts[name]
+    end
+
+    def read_in_site(p)
+      File.read(File.join(root_dir, p))
+    end
   end
 end

@@ -37,4 +37,11 @@ class TestSite < Minitest::Test
     end
     mock.verify
   end
+
+  def test_layout
+    root_dir = File.join(FIXTURES_DIR, "simple_dir")
+    site = ::Isola::Site.new("root_dir: #{root_dir}")
+    site.collect_files
+    site.layout("default")
+  end
 end

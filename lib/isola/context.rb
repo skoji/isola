@@ -17,9 +17,11 @@ module Isola
 
     def render
       # 1. do process page content with tilt and set to content
+      @content, path = @page.render(self)
       # 2. get layout from site
       # 3. do process layout
       # 4. if there's more layout, back to 2.
+      [@content, path]
     end
   end
 end
