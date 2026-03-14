@@ -46,4 +46,13 @@ class TestSite < Minitest::Test
     assert_equal "_layouts/default.html.erb", l.filepath
     assert_equal "<html>\n  <head>\n    <title><%= page.title %></title>\n  </head>\n  <body>\n    <%= content %>\n  </body>\n</html>\n", l.content
   end
+
+  def test_include
+    root_dir = File.join(FIXTURES_DIR, "dir_with_include")
+    site = ::Isola::Site.new("root_dir: #{root_dir}")
+    site.collect_files
+    i = site.include("head")
+    assert_equal "_includes/head.html.erb", i.filepath
+    assert_equal "<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<meta title=\"<%= page.title %>\" >\n\n", i.content
+  end
 end

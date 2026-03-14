@@ -10,6 +10,7 @@ module Isola
       @config = DEFAULT_CONFIG.merge(YAML.safe_load(config, symbolize_names: true) || {})
       @config[:root_dir] ||= Dir.getwd
       @parsed_layouts = {}
+      @parsed_includes = {}
     end
 
     def title
@@ -41,12 +42,20 @@ module Isola
     end
 
     def layout name
-      if !@parsed_layouts[name]
-        p = @file_handler.layouts[name]
-        return nil if !p
-        @parsed_layouts[name] = Source.new(p, read_in_site(p))
-      end
-      @parsed_layouts[name]
+      find_source(name, @parsed_layouts, @file_handler.layouts)
+    end
+
+    def include name
+      find_source(name, @parsed_includes, @file_handler.includes)
+    end
+
+    def find_source(name, cache, store)
+      cache[name] ||=
+        begin
+          p = store[name]
+          return nil unless p
+          Source.new(p, read_in_site(p))
+        end
     end
 
     def read_in_site(p)
