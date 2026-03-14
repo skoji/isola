@@ -9,6 +9,7 @@ module Isola
     def initialize(config)
       @config = DEFAULT_CONFIG.merge(YAML.safe_load(config, symbolize_names: true) || {})
       @config[:root_dir] ||= Dir.getwd
+      @parsed_layouts = {}
     end
 
     def title
@@ -37,7 +38,6 @@ module Isola
 
     def collect_files
       @file_handler = FileHandler.new(root_dir)
-      @parsed_layouts = {}
     end
   end
 end
