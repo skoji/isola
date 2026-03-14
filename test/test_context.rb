@@ -23,7 +23,25 @@ class TestContext < Minitest::Test
     page = Isola::Source.new(p, File.read(File.join(root_dir, p)))
     context = Isola::Context.new(page, site)
     cont, path = context.render
-    assert_equal "<html lang=\"en\">\n  <head>\n    <meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<meta title=\"main page\" >\n\n\n  </head>\n  <body>\n    <section id=\"content\">\n  <p>main page.</p>\n\n</section>\n\n  </body>\n</html>\n", cont
+    expected_cont = <<~EOF
+      <html lang="en">
+        <head>
+          <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta title="main page" >
+      <meta og:type="website" >
+      
+        </head>
+        <body>
+          <section id="content">
+        <p>main page.</p>
+      
+      </section>
+      
+        </body>
+      </html>
+    EOF
+    assert_equal expected_cont, cont
     assert_equal "main.html", path
   end
 end

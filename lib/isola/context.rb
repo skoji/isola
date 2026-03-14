@@ -15,10 +15,10 @@ module Isola
       @page_meta
     end
 
-    def include name
+    def include name, params = {}
       i = @site.include name
       raise "include #{name} not found in #{@current.filepath}" unless i
-      i.render(self, @site)[0]
+      i.render(self, @site, params)[0]
     end
 
     def render

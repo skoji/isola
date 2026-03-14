@@ -44,7 +44,17 @@ class TestSite < Minitest::Test
     site.collect_files
     l = site.layout("default")
     assert_equal "_layouts/default.html.erb", l.filepath
-    assert_equal "<html>\n  <head>\n    <title><%= page.title %></title>\n  </head>\n  <body>\n    <%= content %>\n  </body>\n</html>\n", l.content
+    expected = <<~EOF
+      <html>
+        <head>
+          <title><%= page.title %></title>
+        </head>
+        <body>
+          <%= content %>
+        </body>
+      </html>
+    EOF
+    assert_equal expected, l.content
   end
 
   def test_include
@@ -53,6 +63,14 @@ class TestSite < Minitest::Test
     site.collect_files
     i = site.include("head")
     assert_equal "_includes/head.html.erb", i.filepath
-    assert_equal "<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n<meta title=\"<%= page.title %>\" >\n\n", i.content
+    expected = <<~EOF
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta title="<%= page.title %>" >
+      <% if og_type %>
+      <meta og:type="<%= og_type %>" >
+      <% end %>
+    EOF
+    assert_equal expected, i.content
   end
 end
