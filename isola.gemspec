@@ -30,4 +30,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "tilt", ">=2.7"
+  spec.add_runtime_dependency "kramdown", "~> 2.5"
 end
