@@ -16,11 +16,15 @@ module Isola
     end
 
     def render
-      # 1. do process page content with tilt and set to content
-      @content, path = @page.render(self)
-      # 2. get layout from site
-      # 3. do process layout
-      # 4. if there's more layout, back to 2.
+      @content, path = @page_source.render(self, @site)
+      current = @page_source
+      while current.meta[:layout]
+        current = site.layout(current.meta[:layout])
+        if !current
+          raise "#{current.meta[:layout]} not found for #{current.filepath}"
+        end
+        @content, _ = current.render(self, @site)
+      end
       [@content, path]
     end
   end
