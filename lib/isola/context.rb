@@ -15,15 +15,21 @@ module Isola
       @page_meta
     end
 
+    def include name
+      i = @site.include name
+      raise "include #{name} not found in #{@current.filepath}" unless i
+      i.render(self, @site)[0]
+    end
+
     def render
       @content, path = @page_source.render(self, @site)
-      current = @page_source
-      while current.meta[:layout]
-        current = site.layout(current.meta[:layout])
-        if !current
-          raise "#{current.meta[:layout]} not found for #{current.filepath}"
+      @current = @page_source
+      while @current.meta[:layout]
+        @current = site.layout(@current.meta[:layout])
+        if !@current
+          raise "#{@current.meta[:layout]} not found for #{@current.filepath}"
         end
-        @content, _ = current.render(self, @site)
+        @content, _ = @current.render(self, @site)
       end
       [@content, path]
     end
