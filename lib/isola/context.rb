@@ -23,6 +23,7 @@ module Isola
     end
 
     def render_single_content(path, source)
+      path = path.dup
       rendered = source
       while !(ext = File.extname(path)).empty?
         && @site.is_supported_ext(ext)

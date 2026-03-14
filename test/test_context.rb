@@ -15,7 +15,7 @@ class TestContext < Minitest::Test
     EOF
     )
     context = Isola::Context.new(page, Isola::Site.new(""))
-    rendered, result_path = context.render_single_content(page.filepath.dup, page.content)
+    rendered, result_path = context.render_single_content(page.filepath, page.content)
     assert_equal "<p>This is the awesome content.\nI'd like to say; it is a beautiful day.</p>\n", rendered
     assert_equal "page.html", result_path
   end
