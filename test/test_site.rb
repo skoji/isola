@@ -42,6 +42,8 @@ class TestSite < Minitest::Test
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
     site.collect_files
-    site.layout("default")
+    l = site.layout("default")
+    assert_equal "_layouts/default.html.erb", l.filepath
+    assert_equal "<html>\n  <head>\n    <title><%= page.title %></title>\n  </head>\n  <body>\n    <%= content %>\n  </body>\n</html>\n", l.content
   end
 end
