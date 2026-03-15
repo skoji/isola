@@ -22,13 +22,14 @@ module Isola
     end
 
     def render
-      @content, path = @page_source.render(self, @site)
       @current = @page_source
+      @content, path = @page_source.render(self, @site)
       while @current.meta[:layout]
-        @current = site.layout(@current.meta[:layout])
-        if !@current
+        layout = site.layout(@current.meta[:layout])
+        if !layout
           raise "#{@current.meta[:layout]} not found for #{@current.filepath}"
         end
+        @current = layout
         @content, _ = @current.render(self, @site)
       end
       [@content, path]
