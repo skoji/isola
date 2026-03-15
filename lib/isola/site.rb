@@ -29,7 +29,7 @@ module Isola
       @config[:root_dir]
     end
 
-    def is_supported_ext ext
+    def supported_ext? ext
       SUPPORTED_TILT_EXT.include? ext
     end
 
