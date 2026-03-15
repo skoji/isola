@@ -21,10 +21,10 @@ module Isola
         last_ext = ext
       end
 
-      if !ext.empty?
-        [rendered, path]
-      else
+      if ext.empty?
         [rendered, path + site.result_ext_for(last_ext)]
+      else
+        [rendered, path]
       end
     end
   end
