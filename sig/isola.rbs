@@ -1,3 +1,0 @@
-module Isola
-  VERSION: String
-end
