@@ -5,11 +5,11 @@ require "test_helper"
 class TestSite < Minitest::Test
   def test_initialize_site_with_empty_config
     site = ::Isola::Site.new("")
-    assert_equal ::Isola::Site::DEFAULT_CONFIG.merge({root_dir: Dir.getwd}), site.config
+    assert_equal ::Isola::Site::DEFAULT_CONFIG.merge({root_dir: Dir.pwd}), site.config
     assert_equal ::Isola::Site::DEFAULT_CONFIG[:title], site.title
     assert_equal ::Isola::Site::DEFAULT_CONFIG[:url], site.url
     assert_equal ::Isola::Site::DEFAULT_CONFIG[:default_language], site.lang
-    assert_equal Dir.getwd, site.root_dir
+    assert_equal Dir.pwd, site.root_dir
   end
 
   def test_initialize_site_with_config

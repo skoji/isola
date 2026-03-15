@@ -8,7 +8,7 @@ module Isola
     EXT_MAP = {".md" => ".html", ".mkd" => ".html", ".markdown" => ".html", "" => ".html"}
     def initialize(config)
       @config = DEFAULT_CONFIG.merge(YAML.safe_load(config, symbolize_names: true) || {})
-      @config[:root_dir] ||= Dir.getwd
+      @config[:root_dir] ||= Dir.pwd
       @parsed_layouts = {}
       @parsed_includes = {}
     end
