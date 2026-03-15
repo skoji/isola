@@ -1,7 +1,3 @@
-def remove_exts(filepath)
-  filepath.sub(%r{\.[^/]*\z}, "")
-end
-
 module Isola
   class FileHandler
     attr_reader :pages, :layouts, :includes, :root_dir
@@ -63,6 +59,10 @@ module Isola
           exclude.match?(relative_path)
         end
       end
+    end
+
+    def remove_exts(filepath)
+      filepath.sub(%r{\.[^/]*\z}, "")
     end
   end
 end
