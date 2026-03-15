@@ -16,7 +16,8 @@ gem install isola
 
 ## Usage
 
-To be filled when implemented.
+1. place markdown files in your directory
+2. `isola build`
 
 ## Development Policy
 

@@ -3,6 +3,7 @@ PATH
   specs:
     isola (0.1.0)
       kramdown (~> 2.5)
+      thor (~> 1.5)
       tilt (>= 2.7)
 
 GEM
@@ -78,6 +79,7 @@ GEM
       lint_roller (~> 1.1)
       rubocop-performance (~> 1.26.0)
     stringio (3.2.0)
+    thor (1.5.0)
     tilt (2.7.0)
     tsort (0.2.0)
     unicode-display_width (3.2.0)
@@ -91,7 +93,6 @@ PLATFORMS
 DEPENDENCIES
   irb
   isola!
-  kramdown (~> 2.5)
   minitest (~> 5.16)
   minitest-mock (~> 5.27)
   rake (~> 13.0)
@@ -131,6 +132,7 @@ CHECKSUMS
   standard-custom (1.0.2) sha256=424adc84179a074f1a2a309bb9cf7cd6bfdb2b6541f20c6bf9436c0ba22a652b
   standard-performance (1.9.0) sha256=49483d31be448292951d80e5e67cdcb576c2502103c7b40aec6f1b6e9c88e3f2
   stringio (3.2.0) sha256=c37cb2e58b4ffbd33fe5cd948c05934af997b36e0b6ca6fdf43afa234cf222e1
+  thor (1.5.0) sha256=e3a9e55fe857e44859ce104a84675ab6e8cd59c650a49106a05f55f136425e73
   tilt (2.7.0) sha256=0d5b9ba69f6a36490c64b0eee9f6e9aad517e20dcc848800a06eb116f08c6ab3
   tsort (0.2.0) sha256=9650a793f6859a43b6641671278f79cfead60ac714148aabe4e3f0060480089f
   unicode-display_width (3.2.0) sha256=0cdd96b5681a5949cdbc2c55e7b420facae74c4aaf9a9815eee1087cb1853c42

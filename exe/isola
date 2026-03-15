@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "isola"
+require "thor"
+
+class IsolaCLI < Thor
+  package_name "Isola"
+  desc "build site", "build site on current directory"
+  def build
+    config =
+      if File.exist? "_config.yaml"
+        File.read("_config.yaml")
+      else
+        ""
+      end
+    site = Isola::Site.new(config)
+    site.collect_files
+    site.process
+  end
+end
+
+IsolaCLI.start(ARGV)
