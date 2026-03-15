@@ -1,5 +1,5 @@
 require "yaml"
-
+require "fileutils"
 module Isola
   class Site
     attr_accessor :config
@@ -40,6 +40,17 @@ module Isola
 
     def collect_files
       @file_handler = FileHandler.new(root_dir, excludes: @config[:excludes])
+    end
+
+    def process
+      @file_handler.pages.each do |name, path|
+        page = Source.new(path, read_in_site(path))
+        puts "processing #{path}..."
+        rendered, path = Context.new(page, self).render
+        dest_path = File.join(@file_handler.root_dir, @config[:destination], path)
+        FileUtils.mkdir_p(File.dirname(dest_path))
+        File.write(dest_path, rendered)
+      end
     end
 
     def layout name

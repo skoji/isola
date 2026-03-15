@@ -79,4 +79,48 @@ class TestSite < Minitest::Test
     EOF
     assert_equal expected, i.content
   end
+
+  def test_process
+    f = File.join(FIXTURES_DIR, "dir_with_css")
+    site = ::Isola::Site.new("root_dir: #{f}")
+    site.collect_files
+    site.process
+    dest = File.join(f, "_site")
+    generated = Dir.glob("**/*", base: dest).sort
+    assert_equal ["another_page.html", "css", "css/main.css", "index.html"], generated
+    assert File.directory? File.join(dest, "css")
+    assert_file_eq File.join(f, "css", "main.css"), File.join(dest, "css", "main.css")
+    expected_index = <<~EOF
+      <html>
+        <head>
+          <title>the main page</title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link href="/css/main.css" rel="stylesheet">
+      
+        </head>
+        <body>
+          <p>this is the main page.</p>
+      
+        </body>
+      </html>
+    EOF
+    assert_equal expected_index, File.read(File.join(dest, "index.html"))
+    expected_another = <<~EOF
+      <html>
+        <head>
+          <title>page_with_erb</title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link href="/css/main.css" rel="stylesheet">
+      
+        </head>
+        <body>
+          <p>the data is foobar</p>
+      
+        </body>
+      </html>
+    EOF
+    assert_equal expected_another, File.read(File.join(dest, "another_page.html"))
+  end
 end
