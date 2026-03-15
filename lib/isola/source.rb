@@ -5,8 +5,8 @@ module Isola
     attr_reader :filepath, :meta, :content
     def initialize filepath, text
       @filepath = filepath
-      @meta, @content = if text =~ /\A---\s*\n(.+?)^---\s*\n(.*)\z/m
-        [YAML.safe_load($1, symbolize_names: true), $2]
+      @meta, @content = if (m = text.match(/\A---\s*\n(.+?)^---\s*\n(.*)\z/m))
+        [YAML.safe_load(m[1], symbolize_names: true), m[2]]
       else
         [{}, text]
       end
