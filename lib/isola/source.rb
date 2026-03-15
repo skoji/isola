@@ -15,6 +15,7 @@ module Isola
     def render(context, site, params = {})
       path = @filepath.dup
       rendered = @content.dup
+      last_ext = ""
       while !(ext = File.extname(path)).empty? && site.supported_ext?(ext)
         rendered = Tilt.new(path) { rendered }.render(context, params)
         path.delete_suffix! ext
