@@ -26,9 +26,7 @@ module Isola
       @content, path = @page_source.render(self, @site)
       while @current.meta[:layout]
         layout = site.layout(@current.meta[:layout])
-        if !layout
-          raise "#{@current.meta[:layout]} not found for #{@current.filepath}"
-        end
+        raise "#{@current.meta[:layout]} not found for #{@current.filepath}" unless layout
         @current = layout
         @content, _ = @current.render(self, @site)
       end
