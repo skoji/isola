@@ -30,4 +30,11 @@ class TestFileHandler < Minitest::Test
     assert_equal 1, includes.size, includes
     assert_equal includes["head"], "_includes/head.html.erb", includes
   end
+
+  def test_initialize_with_excludes
+    f = ::Isola::FileHandler.new(File.join(FIXTURES_DIR, "dir_with_README"), excludes: ["README.md"])
+    files = f.pages
+    assert_equal 1, files.size, files
+    assert_equal files["index"], "index.md", files
+  end
 end
