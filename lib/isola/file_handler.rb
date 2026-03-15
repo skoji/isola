@@ -17,6 +17,8 @@ module Isola
       collect(@root_dir)
     end
 
+    private
+
     def collect dir
       Dir.each_child(dir) do |entry|
         absolute_path = File.absolute_path(File.join(dir, entry))

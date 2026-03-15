@@ -49,6 +49,8 @@ module Isola
       find_source(name, @parsed_includes, @file_handler.includes)
     end
 
+    private
+
     def find_source(name, cache, store)
       cache[name] ||=
         begin
