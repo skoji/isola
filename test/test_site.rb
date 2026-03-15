@@ -5,7 +5,7 @@ require "test_helper"
 class TestSite < Minitest::Test
   def test_initialize_site_with_empty_config
     site = ::Isola::Site.new("")
-    assert_equal ::Isola::Site::DEFAULT_CONFIG.merge({root_dir: Dir.pwd}), site.config
+    assert_equal ::Isola::Site::DEFAULT_CONFIG.merge({root_dir: Dir.pwd, excludes: []}), site.config
     assert_equal ::Isola::Site::DEFAULT_CONFIG[:title], site.title
     assert_equal ::Isola::Site::DEFAULT_CONFIG[:url], site.url
     assert_equal ::Isola::Site::DEFAULT_CONFIG[:default_language], site.lang
@@ -19,9 +19,15 @@ class TestSite < Minitest::Test
       destination: dest
       default_language: ja
       root_dir: /tmp
+      excludes: [ "README.md", "CLAUDE.md" ]
     EOF
                             )
-    assert_equal({root_dir: "/tmp", url: "https://skoji.jp", title: "skoji.jp web site", destination: "dest", default_language: "ja"}, site.config)
+    assert_equal({excludes: ["README.md", "CLAUDE.md"],
+                  root_dir: "/tmp",
+                  url: "https://skoji.jp",
+                  title: "skoji.jp web site",
+                  destination: "dest",
+                  default_language: "ja"}, site.config)
     assert_equal "skoji.jp web site", site.title
     assert_equal "https://skoji.jp", site.url
     assert_equal "ja", site.lang
@@ -29,13 +35,13 @@ class TestSite < Minitest::Test
   end
 
   def test_collect_files
-    mock = Minitest::Mock.new
-    mock.expect(:call, "new FileHandler Object", ["/the/root/dir"])
-    ::Isola::FileHandler.stub(:new, mock) do
+    ::Isola::FileHandler.stub(:new, ->(root, excludes:) {
+      assert_equal "/the/root/dir", root
+      assert_equal [], excludes
+    }) do
       site = ::Isola::Site.new("root_dir: /the/root/dir")
       site.collect_files
     end
-    mock.verify
   end
 
   def test_layout
