@@ -10,8 +10,7 @@ module Isola
       @config = DEFAULT_CONFIG.merge(YAML.safe_load(config, symbolize_names: true) || {})
       @config[:root_dir] ||= Dir.pwd
       @config[:excludes] ||= []
-      @parsed_layouts = {}
-      @parsed_includes = {}
+      collect_files
     end
 
     def title
@@ -38,10 +37,6 @@ module Isola
       EXT_MAP[ext]
     end
 
-    def collect_files
-      @file_handler = FileHandler.new(root_dir, excludes: @config[:excludes])
-    end
-
     def build
       dest_dir = File.join(@file_handler.root_dir, @config[:destination])
       FileUtils.rm_rf(dest_dir)
@@ -64,6 +59,12 @@ module Isola
     end
 
     private
+
+    def collect_files
+      @file_handler = FileHandler.new(root_dir, excludes: @config[:excludes])
+      @parsed_layouts = {}
+      @parsed_includes = {}
+    end
 
     def find_source(name, cache, store)
       cache[name] ||=

@@ -34,20 +34,9 @@ class TestSite < Minitest::Test
     assert_equal "/tmp", site.root_dir
   end
 
-  def test_collect_files
-    ::Isola::FileHandler.stub(:new, ->(root, excludes:) {
-      assert_equal "/the/root/dir", root
-      assert_equal [], excludes
-    }) do
-      site = ::Isola::Site.new("root_dir: /the/root/dir")
-      site.collect_files
-    end
-  end
-
   def test_layout
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
-    site.collect_files
     l = site.layout("default")
     assert_equal "_layouts/default.html.erb", l.filepath
     expected = <<~EOF
@@ -66,7 +55,6 @@ class TestSite < Minitest::Test
   def test_include
     root_dir = File.join(FIXTURES_DIR, "dir_with_include")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
-    site.collect_files
     i = site.include("head")
     assert_equal "_includes/head.html.erb", i.filepath
     expected = <<~EOF
@@ -83,7 +71,6 @@ class TestSite < Minitest::Test
   def test_build
     f = File.join(FIXTURES_DIR, "dir_with_css")
     site = ::Isola::Site.new("root_dir: #{f}")
-    site.collect_files
     site.build
     dest = File.join(f, "_site")
     generated = Dir.glob("**/*", base: dest).sort
@@ -129,7 +116,6 @@ class TestSite < Minitest::Test
     dest = File.join(f, "_site")
     File.write(File.join(dest, "unrelated_file.txt"), "some text")
     site = ::Isola::Site.new("root_dir: #{f}")
-    site.collect_files
     site.build
     generated = Dir.glob("**/*", base: dest).sort
     assert_equal ["another_page.html", "index.html"], generated
