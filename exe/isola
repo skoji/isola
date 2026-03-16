@@ -3,6 +3,7 @@
 
 require "isola"
 require "thor"
+require "listen"
 
 class IsolaCLI < Thor
   package_name "Isola"
@@ -17,10 +18,16 @@ class IsolaCLI < Thor
   def serve
     site = construct_site
     site.build
-    dir = File.join(site.root_dir, site.config[:destination])
+
+    watcher = Isola::Watcher.new(site)
+
+    listener = Listen.to(File.expand_path(site.root_dir), &watcher.method(:handle_changes))
+    listener.start
+
+    site_dir = File.join(site.root_dir, site.config[:destination])
     host = site.config[:host]
     port = site.config[:port]
-    server = Isola::DevServer.new(dir, host, port)
+    server = Isola::DevServer.new(site_dir, host, port)
     puts "serving at http://#{host}:#{port}"
     server.start
   end

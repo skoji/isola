@@ -53,6 +53,7 @@ module Isola
         FileUtils.mkdir_p(File.dirname(dest_path))
         File.write(dest_path, rendered)
       end
+      puts "done."
     end
 
     def rebuild
