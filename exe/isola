@@ -19,15 +19,15 @@ class IsolaCLI < Thor
     site = construct_site
     site.build
 
-    watcher = Isola::Watcher.new(site)
-
-    listener = Listen.to(File.expand_path(site.root_dir), &watcher.method(:handle_changes))
-    listener.start
-
     site_dir = File.join(site.root_dir, site.config[:destination])
     host = site.config[:host]
     port = site.config[:port]
     server = Isola::DevServer.new(site_dir, host, port)
+
+    watcher = Isola::Watcher.new(site) { server.notify_reload }
+    listener = Listen.to(File.expand_path(site.root_dir), &watcher.method(:handle_changes))
+    listener.start
+
     puts "serving at http://#{host}:#{port}"
     server.start
   end
