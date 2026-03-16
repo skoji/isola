@@ -26,7 +26,7 @@ module Isola
     end
 
     def notify
-      @queue.push("data:reload\n\n")
+      @queue.push("data: reload\n\n")
     end
 
     def close
