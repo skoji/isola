@@ -3,7 +3,12 @@ require "fileutils"
 module Isola
   class Site
     attr_accessor :config
-    DEFAULT_CONFIG = {url: "http://example.com", title: "my awesome site", destination: "_site", default_language: "en"}.freeze
+    DEFAULT_CONFIG = {url: "http://example.com",
+                      title: "my awesome site",
+                      destination: "_site",
+                      default_language: "en",
+                      host: "127.0.0.1",
+                      port: 4444}.freeze
     SUPPORTED_TILT_EXT = [".erb", ".md", ".markdown", ".mkd"]
     EXT_MAP = {".md" => ".html", ".mkd" => ".html", ".markdown" => ".html", "" => ".html"}
     def initialize(config)

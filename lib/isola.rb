@@ -6,6 +6,7 @@ require_relative "isola/file_handler"
 require_relative "isola/source"
 require_relative "isola/context"
 require_relative "isola/watcher"
+require_relative "isola/dev_server"
 
 module Isola
   class Error < StandardError; end

@@ -32,4 +32,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "tilt", ">=2.7"
   spec.add_runtime_dependency "kramdown", "~> 2.5"
   spec.add_runtime_dependency "thor", "~> 1.5"
+  spec.add_runtime_dependency "webrick", "~> 1.9"
 end

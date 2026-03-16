@@ -6,16 +6,35 @@ require "thor"
 
 class IsolaCLI < Thor
   package_name "Isola"
+
   desc "build site", "build site on current directory"
   def build
+    site = construct_site
+    site.build
+  end
+
+  desc "serve", "build site and serve"
+  def serve
+    site = construct_site
+    site.build
+    dir = File.join(site.root_dir, site.config[:destination])
+    host = site.config[:host]
+    port = site.config[:port]
+    server = Isola::DevServer.new(dir, host, port)
+    puts "serving at http://#{host}:#{port}"
+    server.start
+  end
+
+  private
+
+  def construct_site
     config =
       if File.exist? "_config.yaml"
         File.read("_config.yaml")
       else
         ""
       end
-    site = Isola::Site.new(config)
-    site.build
+    Isola::Site.new(config)
   end
 end
 

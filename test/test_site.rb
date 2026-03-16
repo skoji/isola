@@ -20,6 +20,8 @@ class TestSite < Minitest::Test
       default_language: ja
       root_dir: /tmp
       excludes: [ "README.md", "CLAUDE.md" ]
+      host: localhost
+      port: 8888
     EOF
                             )
     assert_equal({excludes: ["README.md", "CLAUDE.md"],
@@ -27,7 +29,9 @@ class TestSite < Minitest::Test
                   url: "https://skoji.jp",
                   title: "skoji.jp web site",
                   destination: "dest",
-                  default_language: "ja"}, site.config)
+                  default_language: "ja",
+                  host: "localhost",
+                  port: 8888}, site.config)
     assert_equal "skoji.jp web site", site.title
     assert_equal "https://skoji.jp", site.url
     assert_equal "ja", site.lang
