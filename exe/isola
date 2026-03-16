@@ -15,7 +15,6 @@ class IsolaCLI < Thor
         ""
       end
     site = Isola::Site.new(config)
-    site.collect_files
     site.build
   end
 end
