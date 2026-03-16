@@ -43,11 +43,13 @@ module Isola
     end
 
     def process
+      dest_dir = File.join(@file_handler.root_dir, @config[:destination])
+      FileUtils.rm_rf(dest_dir)
       @file_handler.pages.each do |name, path|
         page = Source.new(path, read_in_site(path))
         puts "processing #{path}..."
         rendered, path = Context.new(page, self).render
-        dest_path = File.join(@file_handler.root_dir, @config[:destination], path)
+        dest_path = File.join(dest_dir, path)
         FileUtils.mkdir_p(File.dirname(dest_path))
         File.write(dest_path, rendered)
       end

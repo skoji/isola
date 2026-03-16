@@ -123,4 +123,15 @@ class TestSite < Minitest::Test
     EOF
     assert_equal expected_another, File.read(File.join(dest, "another_page.html"))
   end
+
+  def test_process_clear_destination
+    f = File.join(FIXTURES_DIR, "simple_dir")
+    dest = File.join(f, "_site")
+    File.write(File.join(dest, "unrelated_file.txt"), "some text")
+    site = ::Isola::Site.new("root_dir: #{f}")
+    site.collect_files
+    site.process
+    generated = Dir.glob("**/*", base: dest).sort
+    assert_equal ["another_page.html", "index.html"], generated
+  end
 end
