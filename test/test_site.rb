@@ -13,19 +13,20 @@ class TestSite < Minitest::Test
   end
 
   def test_initialize_site_with_config
+    tmpdir = Dir.mktmpdir
     site = ::Isola::Site.new(<<~EOF
       url: https://skoji.jp
       title: skoji.jp web site
       destination: dest
       default_language: ja
-      root_dir: /tmp
+      root_dir: #{tmpdir}
       excludes: [ "README.md", "CLAUDE.md" ]
       host: localhost
       port: 8888
     EOF
                             )
     assert_equal({excludes: ["README.md", "CLAUDE.md"],
-                  root_dir: "/tmp",
+                  root_dir: tmpdir,
                   url: "https://skoji.jp",
                   title: "skoji.jp web site",
                   destination: "dest",
@@ -35,7 +36,7 @@ class TestSite < Minitest::Test
     assert_equal "skoji.jp web site", site.title
     assert_equal "https://skoji.jp", site.url
     assert_equal "ja", site.lang
-    assert_equal "/tmp", site.root_dir
+    assert_equal tmpdir, site.root_dir
   end
 
   def test_layout
@@ -118,6 +119,7 @@ class TestSite < Minitest::Test
   def test_build_clear_destination
     f = File.join(FIXTURES_DIR, "simple_dir")
     dest = File.join(f, "_site")
+    FileUtils.mkdir_p dest
     File.write(File.join(dest, "unrelated_file.txt"), "some text")
     site = ::Isola::Site.new("root_dir: #{f}")
     site.build
