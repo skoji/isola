@@ -73,12 +73,16 @@ module Isola
     end
 
     def notify_reload
-      @streams.reject!(&:closed?)
-      @streams.each(&:notify)
+      @mutex.synchronize {
+        @streams.reject!(&:closed?)
+        @streams.each(&:notify)
+      }
     end
 
     def shutdown
-      @streams.each(&:close)
+      @mutex.synchronize {
+        @streams.each(&:close)
+      }
       @server&.shutdown
     end
   end
