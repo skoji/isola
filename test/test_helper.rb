@@ -7,6 +7,7 @@ def assert_file_eq(expected, actual)
 end
 
 $LOAD_PATH.unshift File.expand_path("../lib", __dir__)
+
 require "isola"
 
 require "minitest/autorun"

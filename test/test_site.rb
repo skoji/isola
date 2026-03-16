@@ -13,41 +13,35 @@ class TestSite < Minitest::Test
   end
 
   def test_initialize_site_with_config
+    tmpdir = Dir.mktmpdir
     site = ::Isola::Site.new(<<~EOF
       url: https://skoji.jp
       title: skoji.jp web site
       destination: dest
       default_language: ja
-      root_dir: /tmp
+      root_dir: #{tmpdir}
       excludes: [ "README.md", "CLAUDE.md" ]
+      host: localhost
+      port: 8888
     EOF
                             )
     assert_equal({excludes: ["README.md", "CLAUDE.md"],
-                  root_dir: "/tmp",
+                  root_dir: tmpdir,
                   url: "https://skoji.jp",
                   title: "skoji.jp web site",
                   destination: "dest",
-                  default_language: "ja"}, site.config)
+                  default_language: "ja",
+                  host: "localhost",
+                  port: 8888}, site.config)
     assert_equal "skoji.jp web site", site.title
     assert_equal "https://skoji.jp", site.url
     assert_equal "ja", site.lang
-    assert_equal "/tmp", site.root_dir
-  end
-
-  def test_collect_files
-    ::Isola::FileHandler.stub(:new, ->(root, excludes:) {
-      assert_equal "/the/root/dir", root
-      assert_equal [], excludes
-    }) do
-      site = ::Isola::Site.new("root_dir: /the/root/dir")
-      site.collect_files
-    end
+    assert_equal tmpdir, site.root_dir
   end
 
   def test_layout
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
-    site.collect_files
     l = site.layout("default")
     assert_equal "_layouts/default.html.erb", l.filepath
     expected = <<~EOF
@@ -66,7 +60,6 @@ class TestSite < Minitest::Test
   def test_include
     root_dir = File.join(FIXTURES_DIR, "dir_with_include")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
-    site.collect_files
     i = site.include("head")
     assert_equal "_includes/head.html.erb", i.filepath
     expected = <<~EOF
@@ -80,11 +73,10 @@ class TestSite < Minitest::Test
     assert_equal expected, i.content
   end
 
-  def test_process
+  def test_build
     f = File.join(FIXTURES_DIR, "dir_with_css")
     site = ::Isola::Site.new("root_dir: #{f}")
-    site.collect_files
-    site.process
+    site.build
     dest = File.join(f, "_site")
     generated = Dir.glob("**/*", base: dest).sort
     assert_equal ["another_page.html", "css", "css/main.css", "index.html"], generated
@@ -122,5 +114,16 @@ class TestSite < Minitest::Test
       </html>
     EOF
     assert_equal expected_another, File.read(File.join(dest, "another_page.html"))
+  end
+
+  def test_build_clear_destination
+    f = File.join(FIXTURES_DIR, "simple_dir")
+    dest = File.join(f, "_site")
+    FileUtils.mkdir_p dest
+    File.write(File.join(dest, "unrelated_file.txt"), "some text")
+    site = ::Isola::Site.new("root_dir: #{f}")
+    site.build
+    generated = Dir.glob("**/*", base: dest).sort
+    assert_equal ["another_page.html", "index.html"], generated
   end
 end
