@@ -50,6 +50,15 @@ module Isola
       end
     end
 
+    def rebuild
+      collect_files
+      build
+    end
+
+    def ignore?(path)
+      @file_handler.ignore?(path)
+    end
+
     def layout name
       find_source(name, @parsed_layouts, @file_handler.layouts)
     end

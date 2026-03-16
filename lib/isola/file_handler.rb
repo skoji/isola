@@ -17,6 +17,10 @@ module Isola
       collect(@root_dir)
     end
 
+    def ignore?(absolute_path)
+      !process_path?(absolute_path.delete_prefix("#{@root_dir}/"))
+    end
+
     private
 
     def collect dir
