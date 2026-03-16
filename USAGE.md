@@ -83,6 +83,22 @@ isola build
 
 Output is generated in `_site/`.
 
+### 6. Development Server
+
+```bash
+cd my-site
+isola serve
+```
+
+Builds the site and starts a local development server. By default, the server listens on `http://127.0.0.1:4444`. You can change the host and port in `_config.yaml`:
+
+```yaml
+host: 127.0.0.1
+port: 4444
+```
+
+The server watches for file changes and automatically rebuilds the site. HTML pages that contain a `</body>` tag are injected with a live-reload script, so the browser refreshes automatically after each rebuild. Live reload only works for HTML files with a `</body>` tag.
+
 ## File Processing
 
 Isola currently supports only **ERB** (`.erb`) and **Markdown** (`.md`, `.markdown`, `.mkd`) as template engines.
