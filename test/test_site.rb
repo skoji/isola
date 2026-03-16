@@ -80,11 +80,11 @@ class TestSite < Minitest::Test
     assert_equal expected, i.content
   end
 
-  def test_process
+  def test_build
     f = File.join(FIXTURES_DIR, "dir_with_css")
     site = ::Isola::Site.new("root_dir: #{f}")
     site.collect_files
-    site.process
+    site.build
     dest = File.join(f, "_site")
     generated = Dir.glob("**/*", base: dest).sort
     assert_equal ["another_page.html", "css", "css/main.css", "index.html"], generated
@@ -124,13 +124,13 @@ class TestSite < Minitest::Test
     assert_equal expected_another, File.read(File.join(dest, "another_page.html"))
   end
 
-  def test_process_clear_destination
+  def test_build_clear_destination
     f = File.join(FIXTURES_DIR, "simple_dir")
     dest = File.join(f, "_site")
     File.write(File.join(dest, "unrelated_file.txt"), "some text")
     site = ::Isola::Site.new("root_dir: #{f}")
     site.collect_files
-    site.process
+    site.build
     generated = Dir.glob("**/*", base: dest).sort
     assert_equal ["another_page.html", "index.html"], generated
   end
