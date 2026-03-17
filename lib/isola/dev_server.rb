@@ -8,7 +8,7 @@ module Isola
 
     def readpartial(maxlen, buf = +"")
       if !@data
-        @data = @queue.pop
+        @data = @queue.pop.dup
         @data.force_encoding(Encoding::ASCII_8BIT)
       end
 
