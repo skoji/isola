@@ -59,7 +59,7 @@ title: トップページ
 ```erb
 <html>
   <head>
-    <title><%= page.title %></title>
+    <title><%= page[:title] %></title>
   </head>
   <body>
     <%= content %>
@@ -70,8 +70,8 @@ title: トップページ
 テンプレート内では以下が使えます:
 
 - `content` — ページ本文
-- `page.title` など — front-matterの値
-- `site.title`, `site.url`, `site.lang` — サイト設定
+- `page[:title]`, `page[:lang]` など — front-matterの値（`lang`はサイト設定から自動的に含まれますが、設定すれば上書きされます）
+- `site[:title]`, `site[:url]` など — サイト設定
 - `include 'head', key: value` — インクルードの挿入
 
 ### 5. ビルド

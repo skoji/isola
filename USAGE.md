@@ -59,7 +59,7 @@ Use the `.md.erb` extension to enable ERB inside Markdown.
 ```erb
 <html>
   <head>
-    <title><%= page.title %></title>
+    <title><%= page[:title] %></title>
   </head>
   <body>
     <%= content %>
@@ -70,8 +70,8 @@ Use the `.md.erb` extension to enable ERB inside Markdown.
 The following are available in templates:
 
 - `content` — page body
-- `page.title` etc. — front-matter values
-- `site.title`, `site.url`, `site.lang` — site configuration
+- `page[:title]`, `page[:lang]` etc. — front-matter values (including `lang` from site config; you can overwrite in the page front-matter)
+- `site[:title]`, `site[:url]` etc. — site configuration
 - `include 'head', key: value` — insert an include
 
 ### 5. Build
