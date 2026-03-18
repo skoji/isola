@@ -70,6 +70,17 @@ class TestSite < Minitest::Test
     assert_equal expected_meta, l.meta
   end
 
+  def test_pages
+    root_dir = File.join(FIXTURES_DIR, "simple_dir")
+    site = ::Isola::Site.new("root_dir: #{root_dir}")
+    pages = site.pages
+    assert_equal Enumerator, pages.class
+    h = site.pages.to_h
+    assert_equal 2, h.length
+    assert h["index"]
+    assert h["another_page"]
+  end
+
   def test_include
     root_dir = File.join(FIXTURES_DIR, "dir_with_include")
     site = ::Isola::Site.new("root_dir: #{root_dir}")

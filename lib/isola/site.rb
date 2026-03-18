@@ -68,6 +68,14 @@ module Isola
       find_source(name, @parsed_pages, @file_handler.pages)
     end
 
+    def pages
+      Enumerator.new do |block|
+        @file_handler.pages.each_key do |name|
+          block.yield name, page(name)
+        end
+      end
+    end
+
     private
 
     def collect_files
