@@ -18,20 +18,11 @@ module Isola
       collect_files
     end
 
-    def title
-      @config[:title]
-    end
-
-    def url
-      @config[:url]
-    end
-
-    def lang
-      @config[:default_language]
-    end
-
-    def root_dir
-      @config[:root_dir]
+    def [] key
+      if key == :lang
+        key = :default_language
+      end
+      @config[key]
     end
 
     def supported_ext? ext
@@ -76,7 +67,7 @@ module Isola
     private
 
     def collect_files
-      @file_handler = FileHandler.new(root_dir, excludes: @config[:excludes])
+      @file_handler = FileHandler.new(config[:root_dir], excludes: @config[:excludes])
       @parsed_layouts = {}
       @parsed_includes = {}
     end
@@ -91,7 +82,7 @@ module Isola
     end
 
     def read_in_site(p)
-      File.read(File.join(root_dir, p))
+      File.read(File.join(config[:root_dir], p))
     end
   end
 end

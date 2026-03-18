@@ -16,6 +16,9 @@ class TestSource < Minitest::Test
     assert_equal("page.md", filepath, filepath)
     assert_equal({layout: "awesome_layout", title: "this is it!"}, meta)
     assert_equal("This is the awesome content", content.strip)
+    assert_equal("awesome_layout", source[:layout])
+    assert_equal("this is it!", source[:title])
+    assert_nil(source["title"])
   end
 
   def test_render_as_page
@@ -26,7 +29,7 @@ class TestSource < Minitest::Test
       something_to_say: it is a beautiful day.
       ---
       This is the awesome content.
-      I'd like to say. <%= page.something_to_say %>
+      I'd like to say. <%= page[:something_to_say] %>
     EOF
     )
     site = Isola::Site.new("")

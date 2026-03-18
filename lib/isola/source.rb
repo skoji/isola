@@ -12,6 +12,10 @@ module Isola
       end
     end
 
+    def [] key
+      @meta[key]
+    end
+
     def render(context, site, params = {})
       path = @filepath.dup
       rendered = @content.dup
