@@ -69,9 +69,9 @@ module Isola
     end
 
     def pages
-      Enumerator.new do |block|
+      Enumerator.new do |yielder|
         @file_handler.pages.each_key do |name|
-          block.yield name, page(name)
+          yielder.yield name, page(name)
         end
       end
     end

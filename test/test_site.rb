@@ -60,14 +60,14 @@ class TestSite < Minitest::Test
   def test_page
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
-    l = site.page("index")
-    assert_equal "index.md", l.filepath
+    page = site.page("index")
+    assert_equal "index.md", page.filepath
     expected_content = <<~EOF
       this is the main page.
     EOF
-    assert_equal expected_content, l.content
+    assert_equal expected_content, page.content
     expected_meta = {layout: "default", title: "the main page"}
-    assert_equal expected_meta, l.meta
+    assert_equal expected_meta, page.meta
   end
 
   def test_pages
