@@ -6,10 +6,10 @@ class TestSite < Minitest::Test
   def test_initialize_site_with_empty_config
     site = ::Isola::Site.new("")
     assert_equal ::Isola::Site::DEFAULT_CONFIG.merge({root_dir: Dir.pwd, excludes: []}), site.config
-    assert_equal ::Isola::Site::DEFAULT_CONFIG[:title], site.title
-    assert_equal ::Isola::Site::DEFAULT_CONFIG[:url], site.url
-    assert_equal ::Isola::Site::DEFAULT_CONFIG[:default_language], site.lang
-    assert_equal Dir.pwd, site.root_dir
+    assert_equal ::Isola::Site::DEFAULT_CONFIG[:title], site[:title]
+    assert_equal ::Isola::Site::DEFAULT_CONFIG[:url], site[:url]
+    assert_equal ::Isola::Site::DEFAULT_CONFIG[:default_language], site[:lang]
+    assert_equal Dir.pwd, site[:root_dir]
   end
 
   def test_initialize_site_with_config
@@ -33,10 +33,10 @@ class TestSite < Minitest::Test
                   default_language: "ja",
                   host: "localhost",
                   port: 8888}, site.config)
-    assert_equal "skoji.jp web site", site.title
-    assert_equal "https://skoji.jp", site.url
-    assert_equal "ja", site.lang
-    assert_equal tmpdir, site.root_dir
+    assert_equal "skoji.jp web site", site[:title]
+    assert_equal "https://skoji.jp", site[:url]
+    assert_equal "ja", site[:lang]
+    assert_equal tmpdir, site[:root_dir]
   end
 
   def test_layout
@@ -47,7 +47,7 @@ class TestSite < Minitest::Test
     expected = <<~EOF
       <html>
         <head>
-          <title><%= page.title %></title>
+          <title><%= page[:title] %></title>
         </head>
         <body>
           <%= content %>
@@ -65,7 +65,7 @@ class TestSite < Minitest::Test
     expected = <<~EOF
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta title="<%= page.title %>" >
+      <meta title="<%= page[:title] %>" >
       <% if og_type %>
       <meta og:type="<%= og_type %>" >
       <% end %>

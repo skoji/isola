@@ -26,7 +26,7 @@ class TestSource < Minitest::Test
       something_to_say: it is a beautiful day.
       ---
       This is the awesome content.
-      I'd like to say. <%= page.something_to_say %>
+      I'd like to say. <%= page[:something_to_say] %>
     EOF
     )
     site = Isola::Site.new("")
