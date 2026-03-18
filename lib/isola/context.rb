@@ -5,7 +5,7 @@ module Isola
     attr_reader :site, :content, :layout
     def initialize(page, site)
       @page_source = page
-      @meta = {lang: site[:lang]}.merge(page.meta)
+      @meta = {lang: site[:lang]}.merge(page.meta).freeze
       @site = site
       @content = ""
       @layout = {}
