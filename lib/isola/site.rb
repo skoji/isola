@@ -64,12 +64,17 @@ module Isola
       find_source(name, @parsed_includes, @file_handler.includes)
     end
 
+    def page name
+      find_source(name, @parsed_pages, @file_handler.pages)
+    end
+
     private
 
     def collect_files
       @file_handler = FileHandler.new(config[:root_dir], excludes: @config[:excludes])
       @parsed_layouts = {}
       @parsed_includes = {}
+      @parsed_pages = {}
     end
 
     def find_source(name, cache, store)
