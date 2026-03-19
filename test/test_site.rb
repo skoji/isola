@@ -39,7 +39,7 @@ class TestSite < Minitest::Test
     assert_equal tmpdir, site[:root_dir]
   end
 
-  def test_ouput_path_for
+  def test_output_path_for
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
     assert_equal "about.html", site.output_path_for("about.md.erb")

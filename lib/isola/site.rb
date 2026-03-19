@@ -101,7 +101,7 @@ module Isola
         FileUtils.mkdir_p(File.dirname(dest_path))
         FileUtils.copy(src_path, dest_path)
       else
-        raise "cant' render class #{entry.class}"
+        raise "can't render class #{entry.class}"
       end
     end
 
