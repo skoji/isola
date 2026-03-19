@@ -25,14 +25,14 @@ module Isola
       @config[key]
     end
 
-    def supported_ext? ext
+    def ext_to_process_with_tilt? ext
       SUPPORTED_TILT_EXT.include? ext
     end
 
     def process_extensions(path)
       path = path.dup
       last_ext = nil
-      while supported_ext?(ext = File.extname(path))
+      while ext_to_process_with_tilt?(ext = File.extname(path))
         yield(path, ext) if block_given?
         path.delete_suffix!(ext)
         last_ext = ext
