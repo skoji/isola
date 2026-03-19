@@ -47,7 +47,7 @@ module Isola
     def build
       dest_dir = File.join(@file_handler.root_dir, @config[:destination])
       FileUtils.rm_rf(dest_dir)
-      @file_handler.pages.each do |name, path|
+      @file_handler.entries.each do |name, path|
         page = Source.new(path, read_in_site(path))
         puts "building #{path}..."
         rendered, path = Context.new(page, self).render
@@ -76,12 +76,12 @@ module Isola
     end
 
     def page name
-      find_source(name, @parsed_pages, @file_handler.pages)
+      find_source(name, @parsed_pages, @file_handler.entries)
     end
 
     def pages
       Enumerator.new do |yielder|
-        @file_handler.pages.each_key do |name|
+        @file_handler.entries.each_key do |name|
           yielder.yield name, page(name)
         end
       end

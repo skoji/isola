@@ -5,7 +5,7 @@ require "test_helper"
 class TestFileHandler < Minitest::Test
   def test_initialize
     f = ::Isola::FileHandler.new(File.join(FIXTURES_DIR, "simple_dir"))
-    files = f.pages
+    files = f.entries
     assert_equal 2, files.size, files
     assert_equal files["index"], "index.md", files
     assert_equal files["another_page"], "another_page.md.erb", files
@@ -17,7 +17,7 @@ class TestFileHandler < Minitest::Test
 
   def test_initialize_2
     f = ::Isola::FileHandler.new(File.join(FIXTURES_DIR, "dir_with_include"))
-    files = f.pages
+    files = f.entries
     assert_equal 1, files.size, files
     assert_equal files["main"], "main.md", files
 
@@ -33,7 +33,7 @@ class TestFileHandler < Minitest::Test
 
   def test_initialize_with_excludes
     f = ::Isola::FileHandler.new(File.join(FIXTURES_DIR, "dir_with_README"), excludes: ["README.md"])
-    files = f.pages
+    files = f.entries
     assert_equal 1, files.size, files
     assert_equal files["index"], "index.md", files
   end

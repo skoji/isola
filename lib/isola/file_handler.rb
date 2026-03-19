@@ -1,6 +1,6 @@
 module Isola
   class FileHandler
-    attr_reader :pages, :layouts, :includes, :root_dir
+    attr_reader :entries, :layouts, :includes, :root_dir
     DEFAULT_EXCLUDES = [
       ".sass-cache", "gemfiles",
       "Gemfile", "Gemfile.lock", "node_modules",
@@ -11,7 +11,7 @@ module Isola
       @excludes = DEFAULT_EXCLUDES.union(excludes)
       @rejects = Regexp.union(%r{(?:^|/)[._]}, %r{~$})
       @root_dir = File.absolute_path(root_dir)
-      @pages = {}
+      @entries = {}
       @layouts = {}
       @includes = {}
       @output_path_func = output_path_func || method(:remove_exts)
@@ -37,7 +37,7 @@ module Isola
           elsif path.start_with?("_includes/")
             @includes[remove_exts(path).delete_prefix("_includes/")] = path
           else
-            @pages[@output_path_func.call(path)] = path
+            @entries[@output_path_func.call(path)] = path
           end
         end
       end
