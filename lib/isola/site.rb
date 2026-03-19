@@ -29,10 +29,6 @@ module Isola
       SUPPORTED_TILT_EXT.include? ext
     end
 
-    def result_ext_for ext
-      EXT_MAP[ext]
-    end
-
     def process_extensions(path)
       path = path.dup
       last_ext = nil
@@ -92,6 +88,11 @@ module Isola
     end
 
     private
+
+    def result_ext_for ext
+      return "" if ext.nil?
+      EXT_MAP[ext]
+    end
 
     def collect_files
       @file_handler = FileHandler.new(config[:root_dir], excludes: @config[:excludes])
