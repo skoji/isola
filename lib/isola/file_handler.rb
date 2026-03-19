@@ -7,13 +7,14 @@ module Isola
       "vendor/bundle/", "vendor/cache/",
       "vendor/gems/", "vendor/ruby/"
     ]
-    def initialize(root_dir, excludes: [])
+    def initialize(root_dir, output_path_func: nil, excludes: [])
       @excludes = DEFAULT_EXCLUDES.union(excludes)
       @rejects = Regexp.union(%r{(?:^|/)[._]}, %r{~$})
       @root_dir = File.absolute_path(root_dir)
       @pages = {}
       @layouts = {}
       @includes = {}
+      @output_path_func = output_path_func || method(:remove_exts)
       collect(@root_dir)
     end
 
@@ -36,7 +37,7 @@ module Isola
           elsif path.start_with?("_includes/")
             @includes[remove_exts(path).delete_prefix("_includes/")] = path
           else
-            @pages[remove_exts(path)] = path
+            @pages[@output_path_func.call(path)] = path
           end
         end
       end

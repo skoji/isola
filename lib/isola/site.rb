@@ -95,7 +95,7 @@ module Isola
     end
 
     def collect_files
-      @file_handler = FileHandler.new(config[:root_dir], excludes: @config[:excludes])
+      @file_handler = FileHandler.new(config[:root_dir], output_path_func: method(:output_path_for), excludes: @config[:excludes])
       @parsed_layouts = {}
       @parsed_includes = {}
       @parsed_pages = {}
