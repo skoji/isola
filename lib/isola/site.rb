@@ -46,10 +46,9 @@ module Isola
 
     def build
       FileUtils.rm_rf(dest_dir)
-      @file_handler.entries.each do |name, path|
-        page = Source.new(path, read_in_site(path))
-        puts "building #{path}..."
-        render_to_dest page
+      entries.each do |name, entry|
+        puts "building #{name}..."
+        render_to_dest entry
       end
       puts "done."
     end
