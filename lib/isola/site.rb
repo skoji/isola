@@ -75,14 +75,14 @@ module Isola
       find_source(name, @parsed_includes, @file_handler.includes)
     end
 
-    def page name
-      find_source(name, @parsed_pages, @file_handler.entries)
+    def entry name
+      find_source(name, @parsed_entries, @file_handler.entries)
     end
 
-    def pages
+    def entries
       Enumerator.new do |yielder|
         @file_handler.entries.each_key do |name|
-          yielder.yield name, page(name)
+          yielder.yield name, entry(name)
         end
       end
     end
@@ -98,7 +98,7 @@ module Isola
       @file_handler = FileHandler.new(config[:root_dir], output_path_func: method(:output_path_for), excludes: @config[:excludes])
       @parsed_layouts = {}
       @parsed_includes = {}
-      @parsed_pages = {}
+      @parsed_entries = {}
     end
 
     def find_source(name, cache, store)

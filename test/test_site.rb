@@ -64,25 +64,25 @@ class TestSite < Minitest::Test
     assert_equal expected, l.content
   end
 
-  def test_page
+  def test_entry
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
-    page = site.page("index.html")
-    assert_equal "index.md", page.filepath
+    entry = site.entry("index.html")
+    assert_equal "index.md", entry.filepath
     expected_content = <<~EOF
       this is the main page.
     EOF
-    assert_equal expected_content, page.content
+    assert_equal expected_content, entry.content
     expected_meta = {layout: "default", title: "the main page"}
-    assert_equal expected_meta, page.meta
+    assert_equal expected_meta, entry.meta
   end
 
-  def test_pages
+  def test_entries
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
-    pages = site.pages
-    assert_equal Enumerator, pages.class
-    h = site.pages.to_h
+    entries = site.entries
+    assert_equal Enumerator, entries.class
+    h = site.entries.to_h
     assert_equal 2, h.length
     assert h["index.html"]
     assert h["another_page.html"]
