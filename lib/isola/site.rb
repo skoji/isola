@@ -45,15 +45,11 @@ module Isola
     end
 
     def build
-      dest_dir = File.join(@file_handler.root_dir, @config[:destination])
       FileUtils.rm_rf(dest_dir)
       @file_handler.entries.each do |name, path|
         page = Source.new(path, read_in_site(path))
         puts "building #{path}..."
-        rendered, path = Context.new(page, self).render
-        dest_path = File.join(dest_dir, path)
-        FileUtils.mkdir_p(File.dirname(dest_path))
-        File.write(dest_path, rendered)
+        render_to_dest page
       end
       puts "done."
     end
@@ -88,6 +84,17 @@ module Isola
     end
 
     private
+
+    def dest_dir
+      File.join(@file_handler.root_dir, @config[:destination])
+    end
+
+    def render_to_dest entry
+      rendered, path = Context.new(entry, self).render
+      dest_path = File.join(dest_dir, path)
+      FileUtils.mkdir_p(File.dirname(dest_path))
+      File.write(dest_path, rendered)
+    end
 
     def result_ext_for ext
       return "" if ext.nil?
