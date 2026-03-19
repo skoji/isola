@@ -33,6 +33,21 @@ module Isola
       EXT_MAP[ext]
     end
 
+    def process_extensions(path)
+      path = path.dup
+      last_ext = nil
+      while supported_ext?(ext = File.extname(path))
+        yield(path, ext) if block_given?
+        path.delete_suffix!(ext)
+        last_ext = ext
+      end
+      ext.empty? ? path + result_ext_for(last_ext) : path
+    end
+
+    def output_path_for path
+      process_extensions path
+    end
+
     def build
       dest_dir = File.join(@file_handler.root_dir, @config[:destination])
       FileUtils.rm_rf(dest_dir)

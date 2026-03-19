@@ -17,20 +17,11 @@ module Isola
     end
 
     def render(context, site, params = {})
-      path = @filepath.dup
       rendered = @content.dup
-      last_ext = ""
-      while !(ext = File.extname(path)).empty? && site.supported_ext?(ext)
-        rendered = Tilt.new(path) { rendered }.render(context, params)
-        path.delete_suffix! ext
-        last_ext = ext
+      output_path = site.process_extensions(@filepath) do |current_path, _ext|
+        rendered = Tilt.new(current_path) { rendered }.render(context, params)
       end
-
-      if ext.empty?
-        [rendered, path + site.result_ext_for(last_ext)]
-      else
-        [rendered, path]
-      end
+      [rendered, output_path]
     end
   end
 end
