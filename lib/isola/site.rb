@@ -63,15 +63,15 @@ module Isola
     end
 
     def layout name
-      find_source(name, @parsed_layouts, @file_handler.layouts)
+      find_entry(name, @parsed_layouts, @file_handler.layouts)
     end
 
     def include name
-      find_source(name, @parsed_includes, @file_handler.includes)
+      find_entry(name, @parsed_includes, @file_handler.includes)
     end
 
     def entry name
-      find_source(name, @parsed_entries, @file_handler.entries)
+      find_entry(name, @parsed_entries, @file_handler.entries)
     end
 
     def entries
@@ -89,10 +89,20 @@ module Isola
     end
 
     def render_to_dest entry
-      rendered, path = Context.new(entry, self).render
-      dest_path = File.join(dest_dir, path)
-      FileUtils.mkdir_p(File.dirname(dest_path))
-      File.write(dest_path, rendered)
+      if entry.instance_of? Source
+        rendered, path = Context.new(entry, self).render
+        dest_path = File.join(dest_dir, path)
+        FileUtils.mkdir_p(File.dirname(dest_path))
+        File.write(dest_path, rendered)
+      elsif entry.instance_of? StaticFile
+        path = entry.path
+        src_path = File.join(config[:root_dir], path)
+        dest_path = File.join(dest_dir, path)
+        FileUtils.mkdir_p(File.dirname(dest_path))
+        FileUtils.copy(src_path, dest_path)
+      else
+        raise "cant' render class #{entry.class}"
+      end
     end
 
     def result_ext_for ext
@@ -107,12 +117,16 @@ module Isola
       @parsed_entries = {}
     end
 
-    def find_source(name, cache, store)
+    def find_entry(name, cache, store)
       cache[name] ||=
         begin
           p = store[name]
           return nil unless p
-          Source.new(p, read_in_site(p))
+          if ext_to_process_with_tilt?(File.extname(p))
+            Source.new(p, read_in_site(p))
+          else
+            StaticFile.new(p)
+          end
         end
     end
 

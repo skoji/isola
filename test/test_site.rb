@@ -157,4 +157,13 @@ class TestSite < Minitest::Test
     generated = Dir.glob("**/*", base: dest).sort
     assert_equal ["another_page.html", "index.html"], generated
   end
+
+  def test_build_with_image
+    f = File.join(FIXTURES_DIR, "dir_with_image")
+    site = ::Isola::Site.new("root_dir: #{f}")
+    dest = File.join(f, "_site")
+    site.build
+    generated = Dir.glob("**/*", base: dest).sort
+    assert_equal ["cat.jpeg", "index.html"], generated
+  end
 end
