@@ -9,8 +9,8 @@ module Isola
                       default_language: "en",
                       host: "127.0.0.1",
                       port: 4444}.freeze
-    SUPPORTED_TILT_EXT = [".erb", ".md", ".markdown", ".mkd"]
-    EXT_MAP = {".md" => ".html", ".mkd" => ".html", ".markdown" => ".html", "" => ".html"}
+    SUPPORTED_TILT_EXT = [".erb", ".md", ".markdown", ".mkd", ".html"]
+    EXT_MAP = {".md" => ".html", ".mkd" => ".html", ".markdown" => ".html", ".html" => ".html", "" => ".html"}
     def initialize(config)
       @config = DEFAULT_CONFIG.merge(YAML.safe_load(config, symbolize_names: true) || {})
       @config[:root_dir] ||= Dir.pwd
@@ -25,24 +25,30 @@ module Isola
       @config[key]
     end
 
-    def supported_ext? ext
+    def ext_to_process_with_tilt? ext
       SUPPORTED_TILT_EXT.include? ext
     end
 
-    def result_ext_for ext
-      EXT_MAP[ext]
+    def process_extensions(path)
+      path = path.dup
+      last_ext = nil
+      while ext_to_process_with_tilt?(ext = File.extname(path))
+        yield(path, ext) if block_given?
+        path.delete_suffix!(ext)
+        last_ext = ext
+      end
+      ext.empty? ? path + result_ext_for(last_ext) : path
+    end
+
+    def output_path_for path
+      process_extensions path
     end
 
     def build
-      dest_dir = File.join(@file_handler.root_dir, @config[:destination])
       FileUtils.rm_rf(dest_dir)
-      @file_handler.pages.each do |name, path|
-        page = Source.new(path, read_in_site(path))
-        puts "building #{path}..."
-        rendered, path = Context.new(page, self).render
-        dest_path = File.join(dest_dir, path)
-        FileUtils.mkdir_p(File.dirname(dest_path))
-        File.write(dest_path, rendered)
+      entries.each do |name, entry|
+        puts "building #{name}..."
+        render_to_dest entry
       end
       puts "done."
     end
@@ -57,40 +63,70 @@ module Isola
     end
 
     def layout name
-      find_source(name, @parsed_layouts, @file_handler.layouts)
+      find_entry(name, @parsed_layouts, @file_handler.layouts)
     end
 
     def include name
-      find_source(name, @parsed_includes, @file_handler.includes)
+      find_entry(name, @parsed_includes, @file_handler.includes)
     end
 
-    def page name
-      find_source(name, @parsed_pages, @file_handler.pages)
+    def entry name
+      find_entry(name, @parsed_entries, @file_handler.entries)
     end
 
-    def pages
+    def entries
       Enumerator.new do |yielder|
-        @file_handler.pages.each_key do |name|
-          yielder.yield name, page(name)
+        @file_handler.entries.each_key do |name|
+          yielder.yield name, entry(name)
         end
       end
     end
 
     private
 
-    def collect_files
-      @file_handler = FileHandler.new(config[:root_dir], excludes: @config[:excludes])
-      @parsed_layouts = {}
-      @parsed_includes = {}
-      @parsed_pages = {}
+    def dest_dir
+      File.join(@file_handler.root_dir, @config[:destination])
     end
 
-    def find_source(name, cache, store)
+    def render_to_dest entry
+      if entry.instance_of? Source
+        rendered, path = Context.new(entry, self).render
+        dest_path = File.join(dest_dir, path)
+        FileUtils.mkdir_p(File.dirname(dest_path))
+        File.write(dest_path, rendered)
+      elsif entry.instance_of? StaticFile
+        path = entry.path
+        src_path = File.join(config[:root_dir], path)
+        dest_path = File.join(dest_dir, path)
+        FileUtils.mkdir_p(File.dirname(dest_path))
+        FileUtils.copy(src_path, dest_path)
+      else
+        raise "can't render class #{entry.class}"
+      end
+    end
+
+    def result_ext_for ext
+      return "" if ext.nil?
+      EXT_MAP[ext]
+    end
+
+    def collect_files
+      @file_handler = FileHandler.new(config[:root_dir], output_path_func: method(:output_path_for), excludes: @config[:excludes])
+      @parsed_layouts = {}
+      @parsed_includes = {}
+      @parsed_entries = {}
+    end
+
+    def find_entry(name, cache, store)
       cache[name] ||=
         begin
           p = store[name]
           return nil unless p
-          Source.new(p, read_in_site(p))
+          if ext_to_process_with_tilt?(File.extname(p))
+            Source.new(p, read_in_site(p))
+          else
+            StaticFile.new(p)
+          end
         end
     end
 

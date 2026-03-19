@@ -39,6 +39,13 @@ class TestSite < Minitest::Test
     assert_equal tmpdir, site[:root_dir]
   end
 
+  def test_output_path_for
+    root_dir = File.join(FIXTURES_DIR, "simple_dir")
+    site = ::Isola::Site.new("root_dir: #{root_dir}")
+    assert_equal "about.html", site.output_path_for("about.md.erb")
+    assert_equal "LICENSE", site.output_path_for("LICENSE")
+  end
+
   def test_layout
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
@@ -57,28 +64,28 @@ class TestSite < Minitest::Test
     assert_equal expected, l.content
   end
 
-  def test_page
+  def test_entry
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
-    page = site.page("index")
-    assert_equal "index.md", page.filepath
+    entry = site.entry("index.html")
+    assert_equal "index.md", entry.filepath
     expected_content = <<~EOF
       this is the main page.
     EOF
-    assert_equal expected_content, page.content
+    assert_equal expected_content, entry.content
     expected_meta = {layout: "default", title: "the main page"}
-    assert_equal expected_meta, page.meta
+    assert_equal expected_meta, entry.meta
   end
 
-  def test_pages
+  def test_entries
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
-    pages = site.pages
-    assert_equal Enumerator, pages.class
-    h = site.pages.to_h
+    entries = site.entries
+    assert_equal Enumerator, entries.class
+    h = site.entries.to_h
     assert_equal 2, h.length
-    assert h["index"]
-    assert h["another_page"]
+    assert h["index.html"]
+    assert h["another_page.html"]
   end
 
   def test_include
@@ -149,5 +156,14 @@ class TestSite < Minitest::Test
     site.build
     generated = Dir.glob("**/*", base: dest).sort
     assert_equal ["another_page.html", "index.html"], generated
+  end
+
+  def test_build_with_image
+    f = File.join(FIXTURES_DIR, "dir_with_image")
+    site = ::Isola::Site.new("root_dir: #{f}")
+    dest = File.join(f, "_site")
+    site.build
+    generated = Dir.glob("**/*", base: dest).sort
+    assert_equal ["cat.jpeg", "index.html"], generated
   end
 end
