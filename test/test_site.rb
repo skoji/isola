@@ -17,6 +17,11 @@ class TestSite < Minitest::Test
     site = ::Isola::Site.new(<<~EOF
       url: https://skoji.jp
       title: skoji.jp web site
+      languages:
+        ja:
+          label: 日本語
+        en:
+          label: English
       destination: dest
       default_language: ja
       root_dir: #{tmpdir}
@@ -31,6 +36,7 @@ class TestSite < Minitest::Test
                   title: "skoji.jp web site",
                   destination: "dest",
                   default_language: :ja,
+                  languages: {ja: {label: "日本語"}, en: {label: "English"}},
                   host: "localhost",
                   port: 8888}, site.config)
     assert_equal "skoji.jp web site", site[:title]

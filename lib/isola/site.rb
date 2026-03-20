@@ -8,6 +8,7 @@ module Isola
                       destination: "_site",
                       default_language: :en,
                       host: "127.0.0.1",
+                      languages: {},
                       port: 4444}.freeze
     SUPPORTED_TILT_EXT = [".erb", ".md", ".markdown", ".mkd", ".html"]
     EXT_MAP = {".md" => ".html", ".mkd" => ".html", ".markdown" => ".html", ".html" => ".html", "" => ".html"}
