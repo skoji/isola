@@ -6,13 +6,14 @@ module Isola
     DEFAULT_CONFIG = {url: "http://example.com",
                       title: "my awesome site",
                       destination: "_site",
-                      default_language: "en",
+                      default_language: :en,
                       host: "127.0.0.1",
                       port: 4444}.freeze
     SUPPORTED_TILT_EXT = [".erb", ".md", ".markdown", ".mkd", ".html"]
     EXT_MAP = {".md" => ".html", ".mkd" => ".html", ".markdown" => ".html", ".html" => ".html", "" => ".html"}
     def initialize(config)
       @config = DEFAULT_CONFIG.merge(YAML.safe_load(config, symbolize_names: true) || {})
+      @config[:default_language] = @config[:default_language].to_sym
       @config[:root_dir] ||= Dir.pwd
       @config[:excludes] ||= []
       collect_files
@@ -108,6 +109,14 @@ module Isola
     def result_ext_for ext
       return "" if ext.nil?
       EXT_MAP[ext]
+    end
+
+    def detect_language path
+      unless (languages = @config[:languages]).nil?
+        p = Pathname(path).each_filename.to_a
+        return p[0].to_sym if p.length > 1 && languages[p[0].to_sym]
+      end
+      @config[:default_language]
     end
 
     def collect_files
