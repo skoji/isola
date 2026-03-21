@@ -11,10 +11,10 @@ class TestSource < Minitest::Test
       ---
       This is the awesome content
     EOF
-    source = ::Isola::Source.new("page.md", text, :ja)
+    source = ::Isola::Source.new("page.md", text, lang: :ja)
     filepath, meta, content = source.filepath, source.meta, source.content
     assert_equal("page.md", filepath, filepath)
-    assert_equal({layout: "awesome_layout", title: "this is it!", lang: :ja}, meta)
+    assert_equal({layout: "awesome_layout", title: "this is it!", lang: :ja, translations: {}}, meta)
     assert_equal("This is the awesome content", content.strip)
     assert_equal("awesome_layout", source[:layout])
     assert_equal("this is it!", source[:title])
@@ -31,7 +31,7 @@ class TestSource < Minitest::Test
       This is the awesome content.
       I'd like to say. <%= page[:something_to_say] %>
     EOF
-    source = ::Isola::Source.new("page.md.erb", text, :en)
+    source = ::Isola::Source.new("page.md.erb", text, lang: :en)
     site = Isola::Site.new("")
     context = Isola::Context.new(source, site)
     rendered, result_path = source.render(context, site)

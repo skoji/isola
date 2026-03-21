@@ -3,7 +3,7 @@ require "yaml"
 module Isola
   class Source
     attr_reader :filepath, :meta, :content
-    def initialize filepath, text, lang
+    def initialize filepath, text, lang:, translations: {}
       @filepath = filepath
       @meta, @content = if (m = text.match(/\A---\s*\n(.+?)^---\s*\n(.*)\z/m))
         [YAML.safe_load(m[1], symbolize_names: true) || {}, m[2]]
@@ -11,6 +11,7 @@ module Isola
         [{}, text]
       end
       @meta[:lang] = lang
+      @meta[:translations] = translations
     end
 
     def [] key

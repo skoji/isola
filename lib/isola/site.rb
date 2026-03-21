@@ -71,6 +71,11 @@ module Isola
       build
     end
 
+    def url_path_for(path)
+      # will support base_url for the future.
+      File.join("/", path)
+    end
+
     def ignore?(path)
       @file_handler.ignore?(path)
     end
@@ -103,7 +108,7 @@ module Isola
 
     def render_to_dest entry
       if entry.instance_of? Source
-        rendered, path = Context.new(entry, self, languages).render
+        rendered, path = Context.new(entry, self, languages: languages).render
         dest_path = File.join(dest_dir, path)
         FileUtils.mkdir_p(File.dirname(dest_path))
         File.write(dest_path, rendered)
@@ -138,7 +143,8 @@ module Isola
           p = store[resolved]
           return nil unless p
           if ext_to_process_with_tilt?(File.extname(p))
-            Source.new(p, read_in_site(p), lang)
+            translations = translations_for(resolved, store)
+            Source.new(p, read_in_site(p), lang: lang, translations: translations)
           else
             StaticFile.new(p)
           end
@@ -149,6 +155,14 @@ module Isola
       return name unless lang && @lang_router.language_for(name) != lang
       localized = @lang_router.localized_path(name, lang)
       store[localized] ? localized : name
+    end
+
+    def translations_for(path, store)
+      @lang_router.candidate_paths(path).select do |_, candidate|
+        store.key?(candidate)
+      end.transform_values do |candidate|
+        url_path_for(candidate)
+      end
     end
 
     def read_in_site(p)
