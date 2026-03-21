@@ -1,1 +1,8 @@
-# isola config
+default_language: ja
+title: タイトル
+languages:
+  ja:
+    label: 日本語
+  en:
+    label: English
+    title: TheTitle
