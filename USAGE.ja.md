@@ -160,7 +160,7 @@ my-site/
 標準のテンプレート変数に加え、多言語サイトでは以下が利用できます:
 
 - `page[:lang]` — 現在のページの言語（例: `:ja`, `:en`）
-- `page[:translations]` — 現在のページの全翻訳版を`{lang: output_path}`のハッシュで返す
+- `page[:translations]` — 現在のページの全翻訳版を`{lang: url_path}`形式のハッシュで返す（先頭が`/`のURLパスであり、`href`属性などにそのまま利用できます）
 
 #### hreflangリンクの生成
 

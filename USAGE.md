@@ -160,7 +160,7 @@ my-site/
 In addition to the standard template variables, multi-language sites provide:
 
 - `page[:lang]` — the language of the current page (e.g. `:ja`, `:en`)
-- `page[:translations]` — a hash of `{lang: output_path}` for all available translations of the current page
+- `page[:translations]` — a hash of `{lang: url_path}` (URL paths starting with `/`, suitable for `href` attributes) for all available translations of the current page
 
 #### Generating hreflang Links
 

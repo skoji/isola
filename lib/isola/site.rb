@@ -1,7 +1,6 @@
 require "yaml"
 require "fileutils"
 require "delegate"
-require "uri"
 
 module Isola
   class Site
