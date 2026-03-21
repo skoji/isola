@@ -161,6 +161,8 @@ In addition to the standard template variables, multi-language sites provide:
 
 - `page[:lang]` — the language of the current page (e.g. `:ja`, `:en`)
 - `page[:translations]` — a hash of `{lang: url_path}` (URL paths starting with `/`, suitable for `href` attributes) for all available translations of the current page
+- `site.language_label(lang)` — returns the `label` string for the given language (e.g. `site.language_label(:ja)` → `"日本語"`). Returns `nil` if `languages` is not configured.
+- `lang_path(path)` — returns the URL path for the given page path localized to the current page's language (e.g. `lang_path("foo.html")` → `"/en/foo.html"` when rendered in an English page)
 
 #### Generating hreflang Links
 
@@ -170,6 +172,26 @@ Use `page[:translations]` to output alternate-language links:
 <% page[:translations].each do |lang, url| %>
   <link rel="alternate" hreflang="<%= lang %>" href="<%= url %>">
 <% end %>
+```
+
+#### Language Switcher
+
+Use `site.language_label` and `page[:translations]` to build a language switcher:
+
+```erb
+<ul>
+  <% page[:translations].each do |lang, url| %>
+    <li><a href="<%= url %>"><%= site.language_label(lang) %></a></li>
+  <% end %>
+</ul>
+```
+
+#### Generating Localized Links
+
+Use `lang_path` to generate links to other pages within the same language:
+
+```erb
+<a href="<%= lang_path("about.html") %>">About</a>
 ```
 
 ### Output
