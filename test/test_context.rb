@@ -42,4 +42,23 @@ class TestContext < Minitest::Test
     assert_equal expected_cont, cont
     assert_equal "main.html", path
   end
+
+  def test_lang_path
+    root_dir = File.join(FIXTURES_DIR, "dir_with_multilang")
+    config = <<~EOF
+      root_dir: #{root_dir}
+      default_language: ja
+      title: タイトル
+      languages:
+        ja:
+          label: 日本語
+        en:
+          label: English
+    EOF
+    site = Isola::Site.new(config)
+    p = site.instance_eval { @file_handler.entries["main.html"] }
+    page = Isola::Source.new(p, File.read(File.join(root_dir, p)), lang: :en)
+    context = Isola::Context.new(page, site)
+    assert_equal "/en/foo.html", context.lang_path("foo.html")
+  end
 end

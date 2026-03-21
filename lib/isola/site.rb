@@ -80,6 +80,10 @@ module Isola
       File.join("/", path)
     end
 
+    def url_path_for_lang(path, lang)
+      url_path_for(@lang_router.localized_path(path, lang))
+    end
+
     def ignore?(path)
       @file_handler.ignore?(path)
     end
