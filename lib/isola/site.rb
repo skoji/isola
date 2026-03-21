@@ -1,5 +1,7 @@
 require "yaml"
 require "fileutils"
+require "delegate"
+
 module Isola
   class Site
     attr_accessor :config
