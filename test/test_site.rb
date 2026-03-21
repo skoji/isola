@@ -245,8 +245,8 @@ class TestSite < Minitest::Test
           <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta title="タイトル-メインページ" >
-        <link rel="alternate" hreflang="ja" href="main.html">
-        <link rel="alternate" hreflang="en" href="en/main.html">
+        <link rel="alternate" hreflang="ja" href="/main.html">
+        <link rel="alternate" hreflang="en" href="/en/main.html">
       <meta og:type="website" >
       
         </head>
@@ -267,8 +267,8 @@ class TestSite < Minitest::Test
           <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta title="TheTitle-main page" >
-        <link rel="alternate" hreflang="ja" href="main.html">
-        <link rel="alternate" hreflang="en" href="en/main.html">
+        <link rel="alternate" hreflang="ja" href="/main.html">
+        <link rel="alternate" hreflang="en" href="/en/main.html">
       <meta og:type="website" >
       
         </head>

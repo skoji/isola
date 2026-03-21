@@ -1,6 +1,7 @@
 require "yaml"
 require "fileutils"
 require "delegate"
+require "uri"
 
 module Isola
   class Site
@@ -69,6 +70,11 @@ module Isola
     def rebuild
       collect_files
       build
+    end
+
+    def url_path_for(path)
+      # will support base_url for the future.
+      File.join("/", path)
     end
 
     def ignore?(path)
@@ -155,6 +161,8 @@ module Isola
     def translations_for(path, store)
       @lang_router.candidate_paths(path).select do |_, candidate|
         store.key?(candidate)
+      end.transform_values do |candidate|
+        url_path_for(candidate)
       end
     end
 
