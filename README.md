@@ -1,4 +1,5 @@
 # isola
+[![Gem Version](https://badge.fury.io/rb/isola.svg)](https://badge.fury.io/rb/isola)
 
 Super simple static site generator using erb.
 
