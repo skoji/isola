@@ -116,3 +116,67 @@ If an extension remains after processing, it is kept as-is. If no extension rema
 | `*.css`, `*.js` etc. | None | Copied as-is |
 
 Files and directories starting with `_` or `.` are excluded automatically (except `_layouts/` and `_includes/`).
+
+## Multi-Language Support
+
+Isola supports building multi-language sites. Pages for the default language live at the site root, while other languages are placed in subdirectories named by language code.
+
+### Configuration
+
+Add `default_language` and `languages` to `_config.yaml`:
+
+```yaml
+default_language: ja
+languages:
+  ja:
+    label: "日本語"
+  en:
+    label: "English"
+    title: "My Site (EN)"
+```
+
+Each language entry can override any site-level configuration value. For example, `site[:title]` returns `"My Site (EN)"` when rendering English pages.
+
+### Directory Structure
+
+```
+my-site/
+├── _config.yaml
+├── _layouts/
+│   ├── default.html.erb       # Shared layout (used by all languages)
+│   └── en/default.html.erb    # English-specific layout override
+├── _includes/
+│   ├── head.html.erb          # Shared include
+│   └── en/head.html.erb       # English-specific include override
+├── index.md                   # Default language (ja) page
+└── en/index.md                # English page
+```
+
+- **Pages**: Default-language pages live at the root. Other languages go in `<lang>/` subdirectories (e.g. `en/index.md`).
+- **Layouts and includes**: Place language-specific overrides under `_layouts/<lang>/` or `_includes/<lang>/`. If a language-specific version is not found, the shared version is used as a fallback.
+
+### Template Variables
+
+In addition to the standard template variables, multi-language sites provide:
+
+- `page[:lang]` — the language of the current page (e.g. `:ja`, `:en`)
+- `page[:translations]` — a hash of `{lang: output_path}` for all available translations of the current page
+
+#### Generating hreflang Links
+
+Use `page[:translations]` to output alternate-language links:
+
+```erb
+<% page[:translations].each do |lang, url| %>
+  <link rel="alternate" hreflang="<%= lang %>" href="<%= url %>">
+<% end %>
+```
+
+### Output
+
+The output mirrors the source structure:
+
+| Source | Output |
+|---|---|
+| `index.md` | `_site/index.html` |
+| `en/index.md` | `_site/en/index.html` |
