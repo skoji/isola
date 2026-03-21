@@ -17,6 +17,10 @@ module Isola
       @config[:default_language] = @config[:default_language].to_sym
       @config[:root_dir] ||= Dir.pwd
       @config[:excludes] ||= []
+      @lang_router = LanguagePathRouter.new(
+        default_language: default_language,
+        languages: languages.keys
+      )
       collect_files
     end
 
@@ -25,6 +29,10 @@ module Isola
         key = :default_language
       end
       @config[key]
+    end
+
+    def default_language
+      @config[:default_language]
     end
 
     def languages
@@ -68,12 +76,12 @@ module Isola
       @file_handler.ignore?(path)
     end
 
-    def layout name
-      find_entry(name, @parsed_layouts, @file_handler.layouts)
+    def layout name, lang: nil
+      find_entry(name, @parsed_layouts, @file_handler.layouts, lang: lang)
     end
 
-    def include name
-      find_entry(name, @parsed_includes, @file_handler.includes)
+    def include name, lang: nil
+      find_entry(name, @parsed_includes, @file_handler.includes, lang: lang)
     end
 
     def entry name
@@ -123,10 +131,11 @@ module Isola
       @parsed_entries = {}
     end
 
-    def find_entry(name, cache, store)
-      cache[name] ||=
+    def find_entry(name, cache, store, lang: nil)
+      resolved = resolve_localized(name, store, lang)
+      cache[resolved] ||=
         begin
-          p = store[name]
+          p = store[resolved]
           return nil unless p
           if ext_to_process_with_tilt?(File.extname(p))
             Source.new(p, read_in_site(p))
@@ -134,6 +143,12 @@ module Isola
             StaticFile.new(p)
           end
         end
+    end
+
+    def resolve_localized(name, store, lang)
+      return name unless lang && @lang_router.language_for(name) != lang
+      localized = @lang_router.localized_path(name, lang)
+      store[localized] ? localized : name
     end
 
     def read_in_site(p)

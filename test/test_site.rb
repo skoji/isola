@@ -70,6 +70,30 @@ class TestSite < Minitest::Test
     assert_equal expected, l.content
   end
 
+  def test_layout_in_multilang
+    root_dir = File.join(FIXTURES_DIR, "dir_with_multilang")
+    config = <<~EOF
+      root_dir: #{root_dir}
+      default_language: ja
+      title: タイトル
+      languages:
+        ja:
+          label: 日本語
+        en:
+          lagel: English
+          title: TheTitle   
+    EOF
+    site = ::Isola::Site.new(config)
+    head_ja = site.layout("base")
+    head_en = site.layout("base", lang: :en)
+    assert_equal "_layouts/base.html.erb", head_ja.filepath
+    assert_equal "_layouts/en/base.html.erb", head_en.filepath
+    special_ja = site.layout("page")
+    special = site.layout("page", lang: :en)
+    assert_equal "_layouts/page.html.erb", special_ja.filepath
+    assert_equal "_layouts/page.html.erb", special.filepath
+  end
+
   def test_entry
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
@@ -108,6 +132,30 @@ class TestSite < Minitest::Test
       <% end %>
     EOF
     assert_equal expected, i.content
+  end
+
+  def test_include_in_multilang
+    root_dir = File.join(FIXTURES_DIR, "dir_with_multilang")
+    config = <<~EOF
+      root_dir: #{root_dir}
+      default_language: ja
+      title: タイトル
+      languages:
+        ja:
+          label: 日本語
+        en:
+          lagel: English
+          title: TheTitle   
+    EOF
+    site = ::Isola::Site.new(config)
+    head_ja = site.include("head")
+    head_en = site.include("head", lang: :en)
+    assert_equal "_includes/head.html.erb", head_ja.filepath
+    assert_equal "_includes/head.html.erb", head_en.filepath
+    special_ja = site.include("special")
+    special = site.include("special", lang: :en)
+    assert_equal "_includes/special.html.erb", special_ja.filepath
+    assert_equal "_includes/en/special.html.erb", special.filepath
   end
 
   def test_build
