@@ -103,7 +103,7 @@ class TestSite < Minitest::Test
       this is the main page.
     EOF
     assert_equal expected_content, entry.content
-    expected_meta = {layout: "default", title: "the main page"}
+    expected_meta = {layout: "default", title: "the main page", lang: :en}
     assert_equal expected_meta, entry.meta
   end
 

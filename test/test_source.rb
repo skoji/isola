@@ -4,17 +4,17 @@ require "test_helper"
 
 class TestSource < Minitest::Test
   def test_with_simple_md
-    source = ::Isola::Source.new("page.md", <<~EOF
+    text = <<~EOF
       ---
       layout: awesome_layout
       title: this is it!
       ---
       This is the awesome content
     EOF
-    )
+    source = ::Isola::Source.new("page.md", text, :ja)
     filepath, meta, content = source.filepath, source.meta, source.content
     assert_equal("page.md", filepath, filepath)
-    assert_equal({layout: "awesome_layout", title: "this is it!"}, meta)
+    assert_equal({layout: "awesome_layout", title: "this is it!", lang: :ja}, meta)
     assert_equal("This is the awesome content", content.strip)
     assert_equal("awesome_layout", source[:layout])
     assert_equal("this is it!", source[:title])
@@ -22,7 +22,7 @@ class TestSource < Minitest::Test
   end
 
   def test_render_as_page
-    source = ::Isola::Source.new("page.md.erb", <<~EOF
+    text = <<~EOF
       ---
       layout: awesome_layout
       title: The title
@@ -31,7 +31,7 @@ class TestSource < Minitest::Test
       This is the awesome content.
       I'd like to say. <%= page[:something_to_say] %>
     EOF
-    )
+    source = ::Isola::Source.new("page.md.erb", text, :en)
     site = Isola::Site.new("")
     context = Isola::Context.new(source, site)
     rendered, result_path = source.render(context, site)

@@ -133,12 +133,13 @@ module Isola
 
     def find_entry(name, cache, store, lang: nil)
       resolved = resolve_localized(name, store, lang)
+      lang = @lang_router.language_for(resolved)
       cache[resolved] ||=
         begin
           p = store[resolved]
           return nil unless p
           if ext_to_process_with_tilt?(File.extname(p))
-            Source.new(p, read_in_site(p))
+            Source.new(p, read_in_site(p), lang)
           else
             StaticFile.new(p)
           end
