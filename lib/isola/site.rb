@@ -27,6 +27,10 @@ module Isola
       @config[key]
     end
 
+    def languages
+      @config[:languages]
+    end
+
     def ext_to_process_with_tilt? ext
       SUPPORTED_TILT_EXT.include? ext
     end
@@ -110,14 +114,6 @@ module Isola
     def result_ext_for ext
       return "" if ext.nil?
       EXT_MAP[ext]
-    end
-
-    def detect_language path
-      unless (languages = @config[:languages]).nil?
-        p = Pathname(path).each_filename.to_a
-        return p[0].to_sym if p.length > 1 && languages[p[0].to_sym]
-      end
-      @config[:default_language]
     end
 
     def collect_files

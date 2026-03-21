@@ -172,27 +172,4 @@ class TestSite < Minitest::Test
     generated = Dir.glob("**/*", base: dest).sort
     assert_equal ["cat.jpeg", "index.html"], generated
   end
-
-  def test_detect_language_with_no_language_config
-    f = File.join(FIXTURES_DIR, "simple_dir")
-    site = ::Isola::Site.new("root_dir: #{f}")
-    assert_equal :en, site.test_detect_language("foo.html")
-    assert_equal :en, site.test_detect_language("ja/foo.html")
-  end
-
-  def test_detect_language_with_language_config
-    f = File.join(FIXTURES_DIR, "simple_dir")
-    config = <<~EOF
-      root_dir: #{f}
-      default_language: ja
-      languages:
-        ja:
-          label: 日本語
-        en:
-         label: English
-    EOF
-    site = ::Isola::Site.new(config)
-    assert_equal :ja, site.test_detect_language("foo.html")
-    assert_equal :en, site.test_detect_language("en/foo.html")
-  end
 end
