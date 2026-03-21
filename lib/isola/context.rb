@@ -26,6 +26,10 @@ module Isola
       @site_proxy
     end
 
+    def lang_path path
+      @site_proxy.url_path_for_lang(path, @source[:lang])
+    end
+
     def include name, params = {}
       i = @site.include name, lang: @source[:lang]
       raise "include #{name} not found in #{@current.filepath}" unless i

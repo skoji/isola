@@ -201,6 +201,28 @@ class TestSite < Minitest::Test
     assert_equal expected_another, File.read(File.join(dest, "another_page.html"))
   end
 
+  def test_language_label_without_languages
+    f = File.join(FIXTURES_DIR, "simple_dir")
+    site = ::Isola::Site.new("root_dir: #{f}")
+    assert_nil site.language_label(:ja)
+  end
+
+  def test_language_label
+    f = File.join(FIXTURES_DIR, "simple_dir")
+    config = <<~EOF
+      root_dir: #{f}
+      default_language: ja
+      languages:
+        ja:
+          label: 日本語
+        en:
+          label: English
+    EOF
+    site = ::Isola::Site.new(config)
+    assert_equal "日本語", site.language_label(:ja)
+    assert_equal "English", site.language_label(:en)
+  end
+
   def test_build_clear_destination
     f = File.join(FIXTURES_DIR, "simple_dir")
     dest = File.join(f, "_site")

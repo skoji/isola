@@ -38,6 +38,10 @@ module Isola
       @config[:languages]
     end
 
+    def language_label(lang)
+      @config[:languages][lang].to_h[:label]
+    end
+
     def ext_to_process_with_tilt? ext
       SUPPORTED_TILT_EXT.include? ext
     end
@@ -74,6 +78,10 @@ module Isola
     def url_path_for(path)
       # will support base_url for the future.
       File.join("/", path)
+    end
+
+    def url_path_for_lang(path, lang)
+      url_path_for(@lang_router.localized_path(path, lang))
     end
 
     def ignore?(path)
