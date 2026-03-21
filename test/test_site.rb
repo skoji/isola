@@ -80,8 +80,8 @@ class TestSite < Minitest::Test
         ja:
           label: 日本語
         en:
-          lagel: English
-          title: TheTitle   
+          label: English
+          title: TheTitle
     EOF
     site = ::Isola::Site.new(config)
     head_ja = site.layout("base")
@@ -144,8 +144,8 @@ class TestSite < Minitest::Test
         ja:
           label: 日本語
         en:
-          lagel: English
-          title: TheTitle   
+          label: English
+          title: TheTitle
     EOF
     site = ::Isola::Site.new(config)
     head_ja = site.include("head")
@@ -174,11 +174,11 @@ class TestSite < Minitest::Test
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link href="/css/main.css" rel="stylesheet">
-      
+
         </head>
         <body>
           <p>this is the main page.</p>
-      
+
         </body>
       </html>
     EOF
@@ -190,11 +190,11 @@ class TestSite < Minitest::Test
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link href="/css/main.css" rel="stylesheet">
-      
+
         </head>
         <body>
           <p>the data is foobar</p>
-      
+
         </body>
       </html>
     EOF
@@ -219,5 +219,66 @@ class TestSite < Minitest::Test
     site.build
     generated = Dir.glob("**/*", base: dest).sort
     assert_equal ["cat.jpeg", "index.html"], generated
+  end
+
+  def test_build_in_multilang
+    root_dir = File.join(FIXTURES_DIR, "dir_with_multilang")
+    config = <<~EOF
+      root_dir: #{root_dir}
+      default_language: ja
+      title: タイトル
+      languages:
+        ja:
+          label: 日本語
+        en:
+          label: English
+          title: TheTitle
+    EOF
+    site = ::Isola::Site.new(config)
+    site.build
+    dest = File.join(root_dir, "_site")
+    generated = Dir.glob("**/*", base: dest).sort
+    assert_equal ["en", "en/main.html", "main.html"], generated
+    expected_main = <<~EOF
+      <html lang="ja">
+        <head>
+          <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta title="タイトル-メインページ" >
+      <meta og:type="website" >
+      
+        </head>
+        <body>
+          <div>スペシャル</div>
+      <section id="content">
+        <p>メインページ（日本語）</p>
+      
+      </section>
+      
+        </body>
+      </html>
+    EOF
+    assert_equal expected_main, File.read(File.join(dest, "main.html"))
+    expected_en_main = <<~EOF
+      <html lang="en">
+        <head>
+          <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta title="TheTitle-main page" >
+      <meta og:type="website" >
+      
+        </head>
+        <body>
+          <!-- English page. -->
+          <div>special</div>
+      <section id="content">
+        <p>main page in english</p>
+      
+      </section>
+      
+        </body>
+      </html>
+    EOF
+    assert_equal expected_en_main, File.read(File.join(dest, "en/main.html"))
   end
 end

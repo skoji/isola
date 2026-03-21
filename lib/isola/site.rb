@@ -104,7 +104,7 @@ module Isola
 
     def render_to_dest entry
       if entry.instance_of? Source
-        rendered, path = Context.new(entry, self).render
+        rendered, path = Context.new(entry, self, languages).render
         dest_path = File.join(dest_dir, path)
         FileUtils.mkdir_p(File.dirname(dest_path))
         File.write(dest_path, rendered)
