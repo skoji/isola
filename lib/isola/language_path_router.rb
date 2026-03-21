@@ -3,7 +3,6 @@ module Isola
     def initialize(default_language:, languages:)
       @default_language = default_language.to_s
       @languages = languages.map(&:to_s)
-      @non_default = @languages - [@default_language]
     end
 
     def language_for(path)
