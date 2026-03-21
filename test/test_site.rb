@@ -8,7 +8,7 @@ class TestSite < Minitest::Test
     assert_equal ::Isola::Site::DEFAULT_CONFIG.merge({root_dir: Dir.pwd, excludes: []}), site.config
     assert_equal ::Isola::Site::DEFAULT_CONFIG[:title], site[:title]
     assert_equal ::Isola::Site::DEFAULT_CONFIG[:url], site[:url]
-    assert_equal ::Isola::Site::DEFAULT_CONFIG[:default_language], site[:lang]
+    assert_equal ::Isola::Site::DEFAULT_CONFIG[:default_language], site[:default_language]
     assert_equal Dir.pwd, site[:root_dir]
   end
 
@@ -41,7 +41,7 @@ class TestSite < Minitest::Test
                   port: 8888}, site.config)
     assert_equal "skoji.jp web site", site[:title]
     assert_equal "https://skoji.jp", site[:url]
-    assert_equal :ja, site[:lang]
+    assert_equal :ja, site[:default_language]
     assert_equal tmpdir, site[:root_dir]
   end
 

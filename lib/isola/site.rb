@@ -25,9 +25,6 @@ module Isola
     end
 
     def [] key
-      if key == :lang
-        key = :default_language
-      end
       @config[key]
     end
 
