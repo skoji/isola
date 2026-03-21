@@ -6,7 +6,7 @@ module Isola
     def initialize filepath, text, lang
       @filepath = filepath
       @meta, @content = if (m = text.match(/\A---\s*\n(.+?)^---\s*\n(.*)\z/m))
-        [YAML.safe_load(m[1], symbolize_names: true), m[2]]
+        [YAML.safe_load(m[1], symbolize_names: true) || {}, m[2]]
       else
         [{}, text]
       end
