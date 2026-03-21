@@ -103,7 +103,7 @@ class TestSite < Minitest::Test
       this is the main page.
     EOF
     assert_equal expected_content, entry.content
-    expected_meta = {layout: "default", title: "the main page", lang: :en}
+    expected_meta = {layout: "default", title: "the main page", lang: :en, translations: {}}
     assert_equal expected_meta, entry.meta
   end
 
@@ -245,6 +245,8 @@ class TestSite < Minitest::Test
           <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta title="タイトル-メインページ" >
+        <link rel="alternate" hreflang="ja" href="main.html">
+        <link rel="alternate" hreflang="en" href="en/main.html">
       <meta og:type="website" >
       
         </head>
@@ -265,6 +267,8 @@ class TestSite < Minitest::Test
           <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta title="TheTitle-main page" >
+        <link rel="alternate" hreflang="ja" href="main.html">
+        <link rel="alternate" hreflang="en" href="en/main.html">
       <meta og:type="website" >
       
         </head>

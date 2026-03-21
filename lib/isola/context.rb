@@ -3,7 +3,7 @@ require "tilt"
 module Isola
   class Context
     attr_reader :content, :layout
-    def initialize(source, site, languages = {})
+    def initialize(source, site, languages: {})
       @source = source
       @meta = source.meta.freeze
       @site = site
