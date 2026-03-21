@@ -38,6 +38,10 @@ module Isola
       @config[:languages]
     end
 
+    def language_label(lang)
+      @config[:languages][lang].to_h[:label]
+    end
+
     def ext_to_process_with_tilt? ext
       SUPPORTED_TILT_EXT.include? ext
     end
