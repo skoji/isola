@@ -1,28 +1,41 @@
 require "yaml"
 require "fileutils"
+require "delegate"
+
 module Isola
   class Site
     attr_accessor :config
     DEFAULT_CONFIG = {url: "http://example.com",
                       title: "my awesome site",
                       destination: "_site",
-                      default_language: "en",
+                      default_language: :en,
                       host: "127.0.0.1",
+                      languages: {},
                       port: 4444}.freeze
     SUPPORTED_TILT_EXT = [".erb", ".md", ".markdown", ".mkd", ".html"]
     EXT_MAP = {".md" => ".html", ".mkd" => ".html", ".markdown" => ".html", ".html" => ".html", "" => ".html"}
     def initialize(config)
       @config = DEFAULT_CONFIG.merge(YAML.safe_load(config, symbolize_names: true) || {})
+      @config[:default_language] = @config[:default_language].to_sym
       @config[:root_dir] ||= Dir.pwd
       @config[:excludes] ||= []
+      @lang_router = LanguagePathRouter.new(
+        default_language: default_language,
+        languages: languages.keys
+      )
       collect_files
     end
 
     def [] key
-      if key == :lang
-        key = :default_language
-      end
       @config[key]
+    end
+
+    def default_language
+      @config[:default_language]
+    end
+
+    def languages
+      @config[:languages]
     end
 
     def ext_to_process_with_tilt? ext
@@ -62,12 +75,12 @@ module Isola
       @file_handler.ignore?(path)
     end
 
-    def layout name
-      find_entry(name, @parsed_layouts, @file_handler.layouts)
+    def layout name, lang: nil
+      find_entry(name, @parsed_layouts, @file_handler.layouts, lang: lang)
     end
 
-    def include name
-      find_entry(name, @parsed_includes, @file_handler.includes)
+    def include name, lang: nil
+      find_entry(name, @parsed_includes, @file_handler.includes, lang: lang)
     end
 
     def entry name
@@ -90,7 +103,7 @@ module Isola
 
     def render_to_dest entry
       if entry.instance_of? Source
-        rendered, path = Context.new(entry, self).render
+        rendered, path = Context.new(entry, self, languages).render
         dest_path = File.join(dest_dir, path)
         FileUtils.mkdir_p(File.dirname(dest_path))
         File.write(dest_path, rendered)
@@ -117,17 +130,25 @@ module Isola
       @parsed_entries = {}
     end
 
-    def find_entry(name, cache, store)
-      cache[name] ||=
+    def find_entry(name, cache, store, lang: nil)
+      resolved = resolve_localized(name, store, lang)
+      lang = @lang_router.language_for(resolved)
+      cache[resolved] ||=
         begin
-          p = store[name]
+          p = store[resolved]
           return nil unless p
           if ext_to_process_with_tilt?(File.extname(p))
-            Source.new(p, read_in_site(p))
+            Source.new(p, read_in_site(p), lang)
           else
             StaticFile.new(p)
           end
         end
+    end
+
+    def resolve_localized(name, store, lang)
+      return name unless lang && @lang_router.language_for(name) != lang
+      localized = @lang_router.localized_path(name, lang)
+      store[localized] ? localized : name
     end
 
     def read_in_site(p)

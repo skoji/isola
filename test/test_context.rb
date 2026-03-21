@@ -7,7 +7,7 @@ class TestContext < Minitest::Test
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = Isola::Site.new("root_dir: #{root_dir}")
     p = site.instance_eval { @file_handler.entries["index.html"] }
-    page = Isola::Source.new(p, File.read(File.join(root_dir, p)))
+    page = Isola::Source.new(p, File.read(File.join(root_dir, p)), :en)
     context = Isola::Context.new(page, site)
     content, path = context.render
     assert_equal "<html>\n  <head>\n    <title>the main page</title>\n  </head>\n  <body>\n    <p>this is the main page.</p>\n\n  </body>\n</html>\n", content
@@ -18,7 +18,7 @@ class TestContext < Minitest::Test
     root_dir = File.join(FIXTURES_DIR, "dir_with_include")
     site = Isola::Site.new("root_dir: #{root_dir}")
     p = site.instance_eval { @file_handler.entries["main.html"] }
-    page = Isola::Source.new(p, File.read(File.join(root_dir, p)))
+    page = Isola::Source.new(p, File.read(File.join(root_dir, p)), :en)
     context = Isola::Context.new(page, site)
     cont, path = context.render
     expected_cont = <<~EOF

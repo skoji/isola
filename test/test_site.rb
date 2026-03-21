@@ -8,7 +8,7 @@ class TestSite < Minitest::Test
     assert_equal ::Isola::Site::DEFAULT_CONFIG.merge({root_dir: Dir.pwd, excludes: []}), site.config
     assert_equal ::Isola::Site::DEFAULT_CONFIG[:title], site[:title]
     assert_equal ::Isola::Site::DEFAULT_CONFIG[:url], site[:url]
-    assert_equal ::Isola::Site::DEFAULT_CONFIG[:default_language], site[:lang]
+    assert_equal ::Isola::Site::DEFAULT_CONFIG[:default_language], site[:default_language]
     assert_equal Dir.pwd, site[:root_dir]
   end
 
@@ -17,6 +17,11 @@ class TestSite < Minitest::Test
     site = ::Isola::Site.new(<<~EOF
       url: https://skoji.jp
       title: skoji.jp web site
+      languages:
+        ja:
+          label: 日本語
+        en:
+          label: English
       destination: dest
       default_language: ja
       root_dir: #{tmpdir}
@@ -30,12 +35,13 @@ class TestSite < Minitest::Test
                   url: "https://skoji.jp",
                   title: "skoji.jp web site",
                   destination: "dest",
-                  default_language: "ja",
+                  default_language: :ja,
+                  languages: {ja: {label: "日本語"}, en: {label: "English"}},
                   host: "localhost",
                   port: 8888}, site.config)
     assert_equal "skoji.jp web site", site[:title]
     assert_equal "https://skoji.jp", site[:url]
-    assert_equal "ja", site[:lang]
+    assert_equal :ja, site[:default_language]
     assert_equal tmpdir, site[:root_dir]
   end
 
@@ -64,6 +70,30 @@ class TestSite < Minitest::Test
     assert_equal expected, l.content
   end
 
+  def test_layout_in_multilang
+    root_dir = File.join(FIXTURES_DIR, "dir_with_multilang")
+    config = <<~EOF
+      root_dir: #{root_dir}
+      default_language: ja
+      title: タイトル
+      languages:
+        ja:
+          label: 日本語
+        en:
+          label: English
+          title: TheTitle
+    EOF
+    site = ::Isola::Site.new(config)
+    head_ja = site.layout("base")
+    head_en = site.layout("base", lang: :en)
+    assert_equal "_layouts/base.html.erb", head_ja.filepath
+    assert_equal "_layouts/en/base.html.erb", head_en.filepath
+    special_ja = site.layout("page")
+    special = site.layout("page", lang: :en)
+    assert_equal "_layouts/page.html.erb", special_ja.filepath
+    assert_equal "_layouts/page.html.erb", special.filepath
+  end
+
   def test_entry
     root_dir = File.join(FIXTURES_DIR, "simple_dir")
     site = ::Isola::Site.new("root_dir: #{root_dir}")
@@ -73,7 +103,7 @@ class TestSite < Minitest::Test
       this is the main page.
     EOF
     assert_equal expected_content, entry.content
-    expected_meta = {layout: "default", title: "the main page"}
+    expected_meta = {layout: "default", title: "the main page", lang: :en}
     assert_equal expected_meta, entry.meta
   end
 
@@ -104,6 +134,30 @@ class TestSite < Minitest::Test
     assert_equal expected, i.content
   end
 
+  def test_include_in_multilang
+    root_dir = File.join(FIXTURES_DIR, "dir_with_multilang")
+    config = <<~EOF
+      root_dir: #{root_dir}
+      default_language: ja
+      title: タイトル
+      languages:
+        ja:
+          label: 日本語
+        en:
+          label: English
+          title: TheTitle
+    EOF
+    site = ::Isola::Site.new(config)
+    head_ja = site.include("head")
+    head_en = site.include("head", lang: :en)
+    assert_equal "_includes/head.html.erb", head_ja.filepath
+    assert_equal "_includes/head.html.erb", head_en.filepath
+    special_ja = site.include("special")
+    special = site.include("special", lang: :en)
+    assert_equal "_includes/special.html.erb", special_ja.filepath
+    assert_equal "_includes/en/special.html.erb", special.filepath
+  end
+
   def test_build
     f = File.join(FIXTURES_DIR, "dir_with_css")
     site = ::Isola::Site.new("root_dir: #{f}")
@@ -120,11 +174,11 @@ class TestSite < Minitest::Test
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link href="/css/main.css" rel="stylesheet">
-      
+
         </head>
         <body>
           <p>this is the main page.</p>
-      
+
         </body>
       </html>
     EOF
@@ -136,11 +190,11 @@ class TestSite < Minitest::Test
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link href="/css/main.css" rel="stylesheet">
-      
+
         </head>
         <body>
           <p>the data is foobar</p>
-      
+
         </body>
       </html>
     EOF
@@ -165,5 +219,66 @@ class TestSite < Minitest::Test
     site.build
     generated = Dir.glob("**/*", base: dest).sort
     assert_equal ["cat.jpeg", "index.html"], generated
+  end
+
+  def test_build_in_multilang
+    root_dir = File.join(FIXTURES_DIR, "dir_with_multilang")
+    config = <<~EOF
+      root_dir: #{root_dir}
+      default_language: ja
+      title: タイトル
+      languages:
+        ja:
+          label: 日本語
+        en:
+          label: English
+          title: TheTitle
+    EOF
+    site = ::Isola::Site.new(config)
+    site.build
+    dest = File.join(root_dir, "_site")
+    generated = Dir.glob("**/*", base: dest).sort
+    assert_equal ["en", "en/main.html", "main.html"], generated
+    expected_main = <<~EOF
+      <html lang="ja">
+        <head>
+          <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta title="タイトル-メインページ" >
+      <meta og:type="website" >
+      
+        </head>
+        <body>
+          <div>スペシャル</div>
+      <section id="content">
+        <p>メインページ（日本語）</p>
+      
+      </section>
+      
+        </body>
+      </html>
+    EOF
+    assert_equal expected_main, File.read(File.join(dest, "main.html"))
+    expected_en_main = <<~EOF
+      <html lang="en">
+        <head>
+          <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta title="TheTitle-main page" >
+      <meta og:type="website" >
+      
+        </head>
+        <body>
+          <!-- English page. -->
+          <div>special</div>
+      <section id="content">
+        <p>main page in english</p>
+      
+      </section>
+      
+        </body>
+      </html>
+    EOF
+    assert_equal expected_en_main, File.read(File.join(dest, "en/main.html"))
   end
 end
