@@ -76,7 +76,6 @@ module Isola
     end
 
     def url_path_for(path)
-      # will support base_url for the future.
       File.join("/", path)
     end
 
