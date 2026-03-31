@@ -1,7 +1,7 @@
 # isola
 [![Gem Version](https://badge.fury.io/rb/isola.svg)](https://badge.fury.io/rb/isola)
 
-Super simple static site generator using eRuby as a template engine. Supports a multilingual website. Blogging features are not yet implemented.
+Super simple static site generator using eRuby templates. Supports a multilingual website. Blogging features are not yet implemented.
 
 ## Installation
 
