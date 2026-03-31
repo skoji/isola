@@ -307,4 +307,32 @@ class TestSite < Minitest::Test
     EOF
     assert_equal expected_en_main, File.read(File.join(dest, "en/main.html"))
   end
+
+  def test_build_scss_no_config
+    f = File.join(FIXTURES_DIR, "dir_with_scss")
+    site = ::Isola::Site.new("root_dir: #{f}")
+    site.build
+    dest = File.join(f, "_site")
+    generated = Dir.glob("**/*", base: dest).sort
+    assert_equal ["css", "css/main.scss", "index.html"], generated
+  end
+
+  def test_build_scss
+    f = File.join(FIXTURES_DIR, "dir_with_scss")
+    config = <<~EOF
+      root_dir: #{f}
+      tilt_extensions: [.scss]
+    EOF
+    site = ::Isola::Site.new(config)
+    site.build
+    dest = File.join(f, "_site")
+    generated = Dir.glob("**/*", base: dest).sort
+    assert_equal ["css", "css/main.css", "index.html"], generated
+    expected_css = <<~EOF.chomp
+      body {
+        font-family: serif;
+      }
+    EOF
+    assert_equal expected_css, File.read(File.join(dest, "css/main.css"))
+  end
 end

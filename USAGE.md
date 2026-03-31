@@ -101,7 +101,7 @@ The server watches for file changes and automatically rebuilds the site. HTML pa
 
 ## File Processing
 
-Isola currently supports only **ERB** (`.erb`) and **Markdown** (`.md`, `.markdown`, `.mkd`) as template engines.
+Isola supports **ERB** (`.erb`) and **Markdown** (`.md`, `.markdown`, `.mkd`) as built-in template engines.
 
 Extensions are processed from right to left. For example, `page.md.erb` is first processed as ERB, then as Markdown.
 
@@ -116,6 +116,44 @@ If an extension remains after processing, it is kept as-is. If no extension rema
 | `*.css`, `*.js` etc. | None | Copied as-is |
 
 Files and directories starting with `_` or `.` are excluded automatically (except `_layouts/` and `_includes/`).
+
+### Tilt Extensions
+
+You can add additional template engines supported by [Tilt](https://github.com/rtomayko/tilt) via `tilt_extensions` in `_config.yaml`. The corresponding library must be available in your environment (e.g. added to your `Gemfile`).
+
+#### SCSS / Sass
+
+Add `.scss` or `.sass` to `tilt_extensions`:
+
+```yaml
+tilt_extensions:
+  - .scss
+```
+
+SCSS/Sass files are automatically converted to CSS. No extra extension is needed in the filename.
+
+| Source | Processing | Output |
+|---|---|---|
+| `style.scss` | SCSS → CSS | `style.css` |
+
+You also need the `sass-embedded` gem. Add it to your `Gemfile`:
+
+```ruby
+gem "sass-embedded"
+```
+
+#### Other Tilt Extensions
+
+For other Tilt-supported engines (e.g. `.nokogiri`), the output extension is not inferred automatically. Include the desired output extension in the filename:
+
+```yaml
+tilt_extensions:
+  - .nokogiri
+```
+
+| Source | Processing | Output |
+|---|---|---|
+| `data.xml.nokogiri` | Nokogiri template → XML | `data.xml` |
 
 ## Multi-Language Support
 

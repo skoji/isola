@@ -12,8 +12,8 @@ module Isola
                       host: "127.0.0.1",
                       languages: {},
                       port: 4444}.freeze
-    SUPPORTED_TILT_EXT = [".erb", ".md", ".markdown", ".mkd", ".html"]
-    EXT_MAP = {".md" => ".html", ".mkd" => ".html", ".markdown" => ".html", ".html" => ".html", "" => ".html"}
+    SUPPORTED_TILT_EXTS = [".erb", ".md", ".markdown", ".mkd", ".html"]
+    EXT_MAP = {".md" => ".html", ".mkd" => ".html", ".markdown" => ".html", ".html" => ".html", ".scss" => ".css", ".sass" => ".sass", "" => ".html"}
     def initialize(config)
       @config = DEFAULT_CONFIG.merge(YAML.safe_load(config, symbolize_names: true) || {})
       @config[:default_language] = @config[:default_language].to_sym
@@ -23,6 +23,7 @@ module Isola
         default_language: default_language,
         languages: languages.keys
       )
+      @supported_tilt_exts = SUPPORTED_TILT_EXTS.union(@config[:tilt_extensions] || [])
       collect_files
     end
 
@@ -43,7 +44,7 @@ module Isola
     end
 
     def ext_to_process_with_tilt? ext
-      SUPPORTED_TILT_EXT.include? ext
+      @supported_tilt_exts.include? ext
     end
 
     def process_extensions(path)
@@ -151,7 +152,7 @@ module Isola
           return nil unless p
           if ext_to_process_with_tilt?(File.extname(p))
             translations = translations_for(resolved, store)
-            Source.new(p, read_in_site(p), lang: lang, translations: translations)
+            Source.new(p, read_in_site(p), root_dir: @config[:root_dir], lang: lang, translations: translations)
           else
             StaticFile.new(p)
           end
