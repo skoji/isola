@@ -1,6 +1,6 @@
 # Isola 使い方ガイド
 
-ERBを使ったシンプルなStatic Site Generator（SSG）です。
+eRubyをテンプレートとして使うシンプルな静的サイトジェネレータ（Static Site Generator)です。
 
 ## インストール
 
@@ -50,7 +50,7 @@ title: トップページ
 本文をMarkdownで書きます。
 ```
 
-拡張子`.md.erb`にすると、Markdown内でERBが使えます。
+拡張子`.md.erb`にすると、Markdown内でeRubyが使えます。
 
 ### 4. レイアウトを作る
 
@@ -101,18 +101,18 @@ port: 4444
 
 ## ファイルの処理
 
-Isolaは **ERB**（`.erb`）と **Markdown**（`.md`, `.markdown`, `.mkd`）をビルトインのテンプレートエンジンとしてサポートしています。
+Isolaは **eRuby**（`.erb`）と **Markdown**（`.md`, `.markdown`, `.mkd`）をビルトインのテンプレートエンジンとしてサポートしています。
 
-拡張子の末尾から順に処理します。例えば `page.md.erb` の場合、まずERBを処理し、次にMarkdownを処理します。
+拡張子の末尾から順に処理します。例えば `page.md.erb` の場合、まずeRubyを処理し、次にMarkdownを処理します。
 
 処理後にまだ拡張子が残っている場合はそのまま使います。残っていない場合は `.html` が付与されます。
 
 | ソース | 処理 | 出力 |
 |---|---|---|
 | `page.md` | Markdown → HTML | `page.html` |
-| `page.md.erb` | ERB → Markdown → HTML | `page.html` |
-| `style.css.erb` | ERB | `style.css` |
-| `index.html.erb` | ERB | `index.html` |
+| `page.md.erb` | eRuby → Markdown → HTML | `page.html` |
+| `style.css.erb` | eRuby | `style.css` |
+| `index.html.erb` | eRuby | `index.html` |
 | `*.css`, `*.js` など | なし | そのままコピー |
 
 `_`や`.`で始まるファイル・ディレクトリは自動的に除外されます（`_layouts/`と`_includes/`を除く）。

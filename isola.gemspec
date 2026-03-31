@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Satoshi Kojima"]
   spec.email = ["skoji@skoji.jp"]
 
-  spec.summary = "very simple static site generator using ERB"
+  spec.summary = "simple static site generator using eRuby templates."
   spec.description = ""
   spec.homepage = "https://github.com/skoji/isola"
   spec.required_ruby_version = ">= 3.4.0"

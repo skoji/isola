@@ -1,6 +1,6 @@
 # Isola Usage Guide
 
-A simple Static Site Generator (SSG) using ERB.
+A simple Static Site Generator using eRuby templates.
 
 ## Installation
 
@@ -50,7 +50,7 @@ title: Top Page
 Write your content in Markdown.
 ```
 
-Use the `.md.erb` extension to enable ERB inside Markdown.
+Use the `.md.erb` extension to enable eRuby inside Markdown.
 
 ### 4. Create layouts
 
@@ -101,18 +101,18 @@ The server watches for file changes and automatically rebuilds the site. HTML pa
 
 ## File Processing
 
-Isola supports **ERB** (`.erb`) and **Markdown** (`.md`, `.markdown`, `.mkd`) as built-in template engines.
+Isola supports **eRuby** (`.erb`) and **Markdown** (`.md`, `.markdown`, `.mkd`) as built-in template engines.
 
-Extensions are processed from right to left. For example, `page.md.erb` is first processed as ERB, then as Markdown.
+Extensions are processed from right to left. For example, `page.md.erb` is first processed as eRuby, then as Markdown.
 
 If an extension remains after processing, it is kept as-is. If no extension remains, `.html` is used.
 
 | Source | Processing | Output |
 |---|---|---|
 | `page.md` | Markdown → HTML | `page.html` |
-| `page.md.erb` | ERB → Markdown → HTML | `page.html` |
-| `style.css.erb` | ERB | `style.css` |
-| `index.html.erb` | ERB | `index.html` |
+| `page.md.erb` | eRuby → Markdown → HTML | `page.html` |
+| `style.css.erb` | eRuby | `style.css` |
+| `index.html.erb` | eRuby | `index.html` |
 | `*.css`, `*.js` etc. | None | Copied as-is |
 
 Files and directories starting with `_` or `.` are excluded automatically (except `_layouts/` and `_includes/`).
