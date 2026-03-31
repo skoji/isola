@@ -13,7 +13,7 @@ module Isola
                       languages: {},
                       port: 4444}.freeze
     SUPPORTED_TILT_EXTS = [".erb", ".md", ".markdown", ".mkd", ".html"]
-    EXT_MAP = {".md" => ".html", ".mkd" => ".html", ".markdown" => ".html", ".html" => ".html", ".scss" => ".css", ".sass" => ".sass", "" => ".html"}
+    EXT_MAP = Hash.new("").merge({".md" => ".html", ".mkd" => ".html", ".markdown" => ".html", ".html" => ".html", ".scss" => ".css", ".sass" => ".css", "" => ".html"})
     def initialize(config)
       @config = DEFAULT_CONFIG.merge(YAML.safe_load(config, symbolize_names: true) || {})
       @config[:default_language] = @config[:default_language].to_sym
