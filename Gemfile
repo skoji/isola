@@ -12,5 +12,5 @@ group :development, :test do
   gem "standard", "~> 1.3"
   gem "minitest-mock", "~> 5.27"
   gem "listen", "~> 3.10"
-  gem "sass-embedded", "~> 1.98"
+  gem "sass-embedded", "~> 1.99"
 end
