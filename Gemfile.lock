@@ -121,7 +121,6 @@ PLATFORMS
 DEPENDENCIES
   irb
   isola!
-  listen (~> 3.10)
   minitest (~> 6.0)
   minitest-mock (~> 5.27)
   rake (~> 13.0)
