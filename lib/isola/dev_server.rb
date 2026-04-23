@@ -95,7 +95,13 @@ module Isola
     def do_GET(req, res)
       super
       if res["Content-Type"]&.include?("text/html")
-        html = res.body.is_a?(IO) ? res.body.read : res.body
+        if res.body.is_a?(IO)
+          io = res.body
+          html = io.read
+          io.close
+        else
+          html = res.body
+        end
         res.body = html.sub(%r{</body>}i, "#{RELOAD_SCRIPT}</body>")
         res["Content-Length"] = res.body.bytesize
       end

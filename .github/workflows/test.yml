@@ -9,14 +9,17 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     name: test
     strategy:
       matrix:
-        ruby:
-          - '3.4'
-          - '4.0'
-
+        ruby: [3.4, 4.0, jruby, truffleruby]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+        exclude:
+          - ruby: truffleruby
+            platform: windows-latest
+          - ruby: jruby
+            platform: windows-latest
+    runs-on: ${{ matrix.platform }}            
     steps:
       - uses: actions/checkout@v6
         with:
@@ -28,3 +31,11 @@ jobs:
           bundler-cache: true
       - name: Run the default task
         run: bundle exec rake
+  ci:
+    if: ${{ always() }}
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: All tests passed
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: exit 1
